@@ -5,7 +5,7 @@ from core import Controller
 from errors import GENERIC_SERVER_ERROR
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
-from resources import ManageFood, CreateFood
+from resources import CreateFood, CreateAddon, ManageFood, ManageAddon
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -65,10 +65,16 @@ core = Controller(
     db_url="mysql+mysqlconnector://flask:password@127.0.0.1:3306/pizza_shop"
 )
 
+api.add_resource(CreateFood, "/api/menu/food", resource_class_kwargs={"core": core})
 api.add_resource(
     ManageFood, "/api/menu/food/<int:entity_id>", resource_class_kwargs={"core": core}
 )
-api.add_resource(CreateFood, "/api/menu/food", resource_class_kwargs={"core": core})
+api.add_resource(CreateAddon, "/api/menu/addon", resource_class_kwargs={"core": core})
+api.add_resource(
+    ManageAddon,
+    "/api/menu/addon/<int:entity_id>",
+    resource_class_kwargs={"core": core},
+)
 
 if __name__ == "__main__":
     core.bootstrap()
