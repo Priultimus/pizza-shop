@@ -206,6 +206,19 @@ class Controller(DatabaseBackend):
         return True
 
     @handle_session
+    def update_addon_type(self, session, addon_id: int, addon_type: str) -> bool:
+        try:
+            self.manager.update_addon(session, addon_id, addon_type=addon_type)
+        except EntityNotFound:
+            return False
+        except Exception as e:
+            self.logger.warning(
+                "An unhandled error occurred updating the addon item type."
+            )
+            self.logger.warning(f"Addon ID: {addon_id} New Type: {addon_type}")
+            raise
+
+    @handle_session
     def update_addon_price(self, session, addon_id: int, price: int) -> bool:
         try:
             self.manager.update_addon(session, addon_id, price=price)
