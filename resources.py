@@ -4,7 +4,7 @@ from errors import (
     EntryNotFound,
     MissingFoodSize,
     DataInconsistencyError,
-    MissingFoodData,
+    MissingEntryData,
 )
 from core import Controller
 import logging
@@ -32,7 +32,7 @@ class ManageFood(Resource):
     def put(self, entity_id):
         data = request.get_json()
         if not data.get("food"):
-            raise MissingFoodData
+            raise MissingEntryData
         food_data = data.get("food")
 
         food_entity = self.core.find_food(entity_id)
@@ -42,7 +42,7 @@ class ManageFood(Resource):
         food_data = data.get("food")
 
         if not food_data:
-            raise MissingFoodData
+            raise MissingEntryData
 
         failure = []
         total_values = 0
@@ -97,7 +97,7 @@ class CreateFood(Resource):
         data = request.get_json()
         food_data = data.get("food")
         if not food_data or not {"name", "price", "category"} <= set(food_data):
-            raise MissingFoodData
+            raise MissingEntryData
         food = self.core.create_food(
             food_data.get("name"),
             food_data.get("price"),

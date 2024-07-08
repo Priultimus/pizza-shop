@@ -1,5 +1,5 @@
 GENERIC_BAD_REQUEST = 4000
-MISSING_FOOD_DATA = 4001
+MISSING_ENTRY_DATA = 4001
 MISSING_FOOD_SIZE = 4002
 ENTRY_NOT_FOUND = 4003
 GENERIC_SERVER_ERROR = 5000
@@ -35,13 +35,13 @@ class EntryNotFound(GeneralException):
         )
 
 
-class MissingFoodData(GeneralException):
+class MissingEntryData(GeneralException):
     def __init__(self, *args, **kwargs):
         super().__init__(
-            message="Required data is missing",
+            message="Required entry data to is missing",
             data={} if not kwargs.get("data") else kwargs.get("data"),
             http_status_code=400,
-            code=MISSING_FOOD_DATA,
+            code=MISSING_ENTRY_DATA,
             *args,
             **kwargs
         )
