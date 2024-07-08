@@ -1,8 +1,14 @@
 from flask_restful import Resource
 from flask import request
-from errors import EntryNotFound, MissingFoodSize, DataInconsistencyError, MissingFoodData
+from errors import (
+    EntryNotFound,
+    MissingFoodSize,
+    DataInconsistencyError,
+    MissingFoodData,
+)
 from core import Controller
 import logging
+
 
 class ManageFood(Resource):
     def __init__(self, core: Controller):
@@ -11,12 +17,7 @@ class ManageFood(Resource):
     def get(self, entity_id):
         entity = self.core.find_food(entity_id)
         if entity:
-            return {
-                "success": True,
-                "message": "",
-                "code": 0,
-                "data": entity
-            }
+            return {"success": True, "message": "", "code": 0, "data": entity}
         else:
             raise EntryNotFound
 
@@ -25,12 +26,7 @@ class ManageFood(Resource):
             food = self.core.delete_food(entity_id)
         except:
             raise EntryNotFound
-        return {
-            "success": True,
-            "message": "",
-            "code": 0,
-            "data": food
-        }
+        return {"success": True, "message": "", "code": 0, "data": food}
 
     def put(self, entity_id):
         data = request.get_json()
@@ -45,7 +41,9 @@ class ManageFood(Resource):
         food = self.core.update_food_name(entity_id, data.get("food"))
 
         if not food:
-            logging.error("Food entity exists, but when attempted to be updated, the entity was not found.")
+            logging.error(
+                "Food entity exists, but when attempted to be updated, the entity was not found."
+            )
             logging.error(f"Entity ID: {entity_id}\nData: {data}")
             raise DataInconsistencyError
 
@@ -75,7 +73,9 @@ class ManageFood(Resource):
 
         if food_data.get("category"):
             total_values += 1
-            result = self.core.update_food_category(entity_id, food_data.get("category"))
+            result = self.core.update_food_category(
+                entity_id, food_data.get("category")
+            )
             if not result:
                 success = False
                 failure.append("category")
@@ -88,17 +88,13 @@ class ManageFood(Resource):
                 failure.append("food_size")
 
         if success:
-            return {
-                "success": True, 
-                "message": "", 
-                "code": 0, 
-                "data": {}
-            }
+            return {"success": True, "message": "", "code": 0, "data": {}}
 
         if len(failure) == total_values:
             raise EntryNotFound
 
         raise DataInconsistencyError
+
 
 class CreateFood(Resource):
     def __init__(self, core: Controller):
@@ -113,14 +109,9 @@ class CreateFood(Resource):
             food_data.get("food_name"),
             food_data.get("price"),
             food_data.get("category"),
-            food_size=food_data.get("food_size")
+            food_size=food_data.get("food_size"),
         )
         if food:
-            return {
-                "success": True,
-                "message": "",
-                "code": 0,
-                "data": food
-            }
+            return {"success": True, "message": "", "code": 0, "data": food}
         else:
             raise MissingFoodSize
