@@ -1,14 +1,10 @@
 import time
-import sqlalchemy
 from typing import Optional as optional
 from datetime import datetime, timedelta, timezone
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Boolean
-from sqlalchemy import create_engine, func
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, create_engine
 from sqlalchemy.inspection import inspect
-import sqlalchemy.orm
-from sqlalchemy.sql import text
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
+from sqlalchemy.orm.query import Query
 from errors import ResturantException, EntityNotFound
 import logging
 
@@ -20,7 +16,6 @@ class MySQLBackend(object):
     """Represents MySQL backend that manages creating the engine and session."""
 
     def __init__(self, db_creation):
-
         self.engine = None
         self.Session = sessionmaker(autocommit=False, expire_on_commit=False)
         self.setup_engine(db_creation)
@@ -617,7 +612,7 @@ class ManageResturantData:
 class ViewResturantData:
 
     @staticmethod
-    def view_food(session: Session, food_id: int) -> sqlalchemy.orm.query.Query:
+    def view_food(session: Session, food_id: int) -> Query:
         """Returns the details of a given food item."""
         entity = session.query(Food).filter(Food.food_id == food_id).first()
         if not entity:
@@ -625,7 +620,7 @@ class ViewResturantData:
         return entity
 
     @staticmethod
-    def view_addon(session: Session, addon_id: int) -> sqlalchemy.orm.query.Query:
+    def view_addon(session: Session, addon_id: int) -> Query:
         """Returns the details of a given addon item."""
         entity = session.query(Addon).filter(Addon.addon_id == addon_id).first()
         if not entity:
@@ -633,7 +628,7 @@ class ViewResturantData:
         return entity
 
     @staticmethod
-    def view_customer(session: Session, customer_id: int) -> sqlalchemy.orm.query.Query:
+    def view_customer(session: Session, customer_id: int) -> Query:
         """Returns the details of a given customer."""
         entity = (
             session.query(Customer).filter(Customer.customer_id == customer_id).first()
@@ -645,9 +640,7 @@ class ViewResturantData:
         return entity
 
     @staticmethod
-    def view_customer_orders(
-        session: Session, customer_id: int
-    ) -> list[sqlalchemy.orm.query.Query]:
+    def view_customer_orders(session: Session, customer_id: int) -> list[Query]:
         """Returns all orders for a given customer."""
         entity = (
             session.query(CustomerOrder)
@@ -659,7 +652,7 @@ class ViewResturantData:
         return [item for item in entity]
 
     @staticmethod
-    def view_order(session: Session, order_id: int) -> sqlalchemy.orm.query.Query:
+    def view_order(session: Session, order_id: int) -> Query:
         """Returns the details of a given order."""
         entity = session.query(Order).filter(Order.order_id == order_id).first()
         if not entity:
@@ -692,7 +685,7 @@ class ViewResturantData:
         return total
 
     @staticmethod
-    def view_order_customer(session, order_id) -> sqlalchemy.orm.query.Query:
+    def view_order_customer(session, order_id) -> Query:
         """Returns the customer details for a given order."""
         entity = (
             session.query(CustomerOrder)
@@ -704,9 +697,7 @@ class ViewResturantData:
         return entity
 
     @staticmethod
-    def view_order_items(
-        session: Session, order_id: int
-    ) -> list[sqlalchemy.orm.query.Query]:
+    def view_order_items(session: Session, order_id: int) -> list[Query]:
         """Returns the items in a given order."""
         order_items = (
             session.query(OrderItem).filter(OrderItem.order_id == order_id).all()
@@ -716,9 +707,7 @@ class ViewResturantData:
         return [item for item in order_items]
 
     @staticmethod
-    def view_item_mods(
-        session: Session, order_item_id: int
-    ) -> list[sqlalchemy.orm.query.Query]:
+    def view_item_mods(session: Session, order_item_id: int) -> list[Query]:
         """Returns all item modifications for a given order item."""
         entity = (
             session.query(ItemMod).filter(ItemMod.order_item_id == order_item_id).all()
