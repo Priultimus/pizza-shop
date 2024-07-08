@@ -27,7 +27,8 @@ class ExtendedAPI(Api):
         """It helps preventing writing unnecessary
         try/except block though out the application
         """
-        print(err)  # log every exception raised in the application
+        handle_error_logger = logging.getLogger("handle_error")
+        handle_error_logger.error(err)  # log every exception raised in the application
         # Handle HTTPExceptions
         if isinstance(err, HTTPException):
             return {
@@ -54,7 +55,7 @@ api = ExtendedAPI(app)
 
 def log_exception(sender, exception, **extra):
 
-    logger.error(f"An exception occurred: {exception}!!!!")
+    logger.error(f"{sender} Triggered an exception: {exception}")
     logger.error(f"Extra: {extra}")
 
 

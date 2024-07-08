@@ -10,8 +10,10 @@ from sqlalchemy.sql import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
 from errors import ResturantException, EntityNotFound
+import logging
 
 Base = declarative_base()
+logger = logging.getLogger(__name__)
 
 
 class MySQLBackend(object):
@@ -38,7 +40,7 @@ class MySQLBackend(object):
             try:
                 connection = self.engine.connect()
             except Exception as error:
-                print("MySQL server connection failed. Retrying...")
+                logger.warning("MySQL server connection failed. Retrying...")
                 time.sleep(i * 5)
                 continue
         if not connection:
@@ -462,7 +464,7 @@ class ManageResturantData:
             session.delete(entity)
             session.commit()
         except Exception as e:
-            print("Error: ", e)
+            logger.error(f"Error: {e}")
             return False
             # XXX: If I knew what kind of errors would occur, here would be a good place to ensure data consistency.
         return True
