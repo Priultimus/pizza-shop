@@ -697,6 +697,18 @@ class ViewResturantData:
         return entity
 
     @staticmethod
+    def view_order_item(session: Session, order_item_id: int) -> Query:
+        """Returns the details of a given order item."""
+        entity = (
+            session.query(OrderItem)
+            .filter(OrderItem.order_item_id == order_item_id)
+            .first()
+        )
+        if not entity:
+            raise EntityNotFound("The order item does not exist in the database.")
+        return entity
+
+    @staticmethod
     def view_order_items(session: Session, order_id: int) -> list[Query]:
         """Returns the items in a given order."""
         order_items = (
