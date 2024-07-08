@@ -28,7 +28,9 @@ class ExtendedAPI(Api):
         try/except block though out the application
         """
         handle_error_logger = logging.getLogger("handle_error")
-        handle_error_logger.error(err)  # log every exception raised in the application
+        handle_error_logger.exception(
+            err
+        )  # log every exception raised in the application
         # Handle HTTPExceptions
         if isinstance(err, HTTPException):
             return {
