@@ -41,6 +41,7 @@ class Controller(MySQLBackend):
         self.customer = Customer()
         self.manager = ManageResturantData()
         self.viewer = ViewResturantData()
+        self.logger = logging.getLogger(__name__)
 
     @handle_session
     def find_food(self, session, food_id: int) -> Union[dict, bool]:
@@ -49,9 +50,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred searching for a food item.")
-            logging.warning(f"Food ID: {food_id}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred searching for a food item."
+            )
+            self.logger.warning(f"Food ID: {food_id}")
+            self.logger.error(e)
             raise
 
         return food.convert_to_dict()
@@ -65,19 +68,19 @@ class Controller(MySQLBackend):
                 session, food_name, price, category, food_size=food_size
             )
         except ResturantException:
-            logging.debug(
+            self.logger.debug(
                 f"Attempted to create a new food item with a category that requires a new food size."
             )
-            logging.debug(
+            self.logger.debug(
                 f"Name: {food_name}\nPrice: {price}\nCategory: {category}\nFood Size: {food_size}"
             )
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred creating a new food item.")
-            logging.warning(
+            self.logger.warning("An unhandled error occurred creating a new food item.")
+            self.logger.warning(
                 f"Name: {food_name}\nPrice: {price}\nCategory: {category}\nFood Size: {food_size}"
             )
-            logging.error(e)
+            self.logger.error(e)
             raise
         return food.convert_to_dict()
 
@@ -90,9 +93,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the food item name.")
-            logging.warning(f"Food ID: {food_id}\nNew Name: {food_name}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the food item name."
+            )
+            self.logger.warning(f"Food ID: {food_id}\nNew Name: {food_name}")
+            self.logger.error(e)
             raise
 
         return food.convert_to_dict()
@@ -104,9 +109,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the food item price.")
-            logging.warning(f"Food ID: {food_id}\nNew Price: {price}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the food item price."
+            )
+            self.logger.warning(f"Food ID: {food_id}\nNew Price: {price}")
+            self.logger.error(e)
             raise
 
         return food.convert_to_dict()
@@ -120,11 +127,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred updating the food item category."
             )
-            logging.warning(f"Food ID: {food_id}\nNew Category: {category}")
-            logging.error(e)
+            self.logger.warning(f"Food ID: {food_id}\nNew Category: {category}")
+            self.logger.error(e)
             raise
 
         return food.convert_to_dict()
@@ -138,9 +145,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the food item size.")
-            logging.warning(f"Food ID: {food_id}\nNew Size: {food_size}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the food item size."
+            )
+            self.logger.warning(f"Food ID: {food_id}\nNew Size: {food_size}")
+            self.logger.error(e)
             raise
 
         return food.convert_to_dict()
@@ -152,9 +161,9 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred deleting the food item.")
-            logging.warning(f"Food ID: {food_id}")
-            logging.error(e)
+            self.logger.warning("An unhandled error occurred deleting the food item.")
+            self.logger.warning(f"Food ID: {food_id}")
+            self.logger.error(e)
             raise
 
         return True
@@ -166,9 +175,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred searching for an addon item.")
-            logging.warning(f"Addon ID: {addon_id}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred searching for an addon item."
+            )
+            self.logger.warning(f"Addon ID: {addon_id}")
+            self.logger.error(e)
             raise
 
         return addon.convert_to_dict()
@@ -182,11 +193,13 @@ class Controller(MySQLBackend):
                 session, addon_name, addon_type, price, addon_size=addon_size
             )
         except Exception as e:
-            logging.warning("An unhandled error occurred creating a new addon item.")
-            logging.warning(
+            self.logger.warning(
+                "An unhandled error occurred creating a new addon item."
+            )
+            self.logger.warning(
                 f"Name: {addon_name}\nPrice: {price}\nAddon Size: {addon_size}"
             )
-            logging.error(e)
+            self.logger.error(e)
             raise
         return addon.convert_to_dict()
 
@@ -199,9 +212,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the addon item name.")
-            logging.warning(f"Addon ID: {addon_id}\nNew Name: {addon_name}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the addon item name."
+            )
+            self.logger.warning(f"Addon ID: {addon_id}\nNew Name: {addon_name}")
+            self.logger.error(e)
             raise
 
         return addon.convert_to_dict()
@@ -215,11 +230,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred updating the addon item price."
             )
-            logging.warning(f"Addon ID: {addon_id}\nNew Price: {price}")
-            logging.error(e)
+            self.logger.warning(f"Addon ID: {addon_id}\nNew Price: {price}")
+            self.logger.error(e)
             raise
 
         return addon.convert_to_dict()
@@ -233,9 +248,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the addon item size.")
-            logging.warning(f"Addon ID: {addon_id}\nNew Size: {addon_size}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the addon item size."
+            )
+            self.logger.warning(f"Addon ID: {addon_id}\nNew Size: {addon_size}")
+            self.logger.error(e)
             raise
 
         return addon.convert_to_dict()
@@ -247,9 +264,9 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred deleting the addon item.")
-            logging.warning(f"Addon ID: {addon_id}")
-            logging.error(e)
+            self.logger.warning("An unhandled error occurred deleting the addon item.")
+            self.logger.warning(f"Addon ID: {addon_id}")
+            self.logger.error(e)
             raise
 
         return True
@@ -261,9 +278,9 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred searching for a customer.")
-            logging.warning(f"Customer ID: {customer_id}")
-            logging.error(e)
+            self.logger.warning("An unhandled error occurred searching for a customer.")
+            self.logger.warning(f"Customer ID: {customer_id}")
+            self.logger.error(e)
             raise
 
         return customer.convert_to_dict()
@@ -283,17 +300,17 @@ class Controller(MySQLBackend):
                 customer_postal_code=customer_address.get("postal_code"),
             )
         except Exception as e:
-            logging.warning("An unhandled error occurred creating a new customer.")
-            logging.warning(
+            self.logger.warning("An unhandled error occurred creating a new customer.")
+            self.logger.warning(
                 f"Name: {name}\nPhone: {phone}\nAddress: {customer_address}"
             )
-            logging.warning(
+            self.logger.warning(
                 f"Customer Street: {customer_address.get('street')}\nCustomer City: {customer_address.get('city')}"
             )
-            logging.warning(
+            self.logger.warning(
                 f"Customer Province: {customer_address.get('province')}\nCustomer Postal Code: {customer_address.get('postal_code')}"
             )
-            logging.error(e)
+            self.logger.error(e)
             raise
 
         return customer.convert_to_dict()
@@ -307,9 +324,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the customer name.")
-            logging.warning(f"Customer ID: {customer_id}\nNew Name: {name}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the customer name."
+            )
+            self.logger.warning(f"Customer ID: {customer_id}\nNew Name: {name}")
+            self.logger.error(e)
             raise
         return customer.convert_to_dict()
 
@@ -322,9 +341,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the customer phone.")
-            logging.warning(f"Customer ID: {customer_id}\nNew Phone: {phone}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the customer phone."
+            )
+            self.logger.warning(f"Customer ID: {customer_id}\nNew Phone: {phone}")
+            self.logger.error(e)
             raise
         return customer.convert_to_dict()
 
@@ -344,17 +365,19 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred updating the customer address."
             )
-            logging.warning(f"Customer ID: {customer_id}\nAddress: {customer_address}")
-            logging.warning(
+            self.logger.warning(
+                f"Customer ID: {customer_id}\nAddress: {customer_address}"
+            )
+            self.logger.warning(
                 f"Customer Street: {customer_address.get('street')}\nCustomer City: {customer_address.get('city')}"
             )
-            logging.warning(
+            self.logger.warning(
                 f"Customer Province: {customer_address.get('province')}\nCustomer Postal Code: {customer_address.get('postal_code')}"
             )
-            logging.error(e)
+            self.logger.error(e)
             raise
         return customer.convert_to_dict()
 
@@ -369,9 +392,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the customer street.")
-            logging.warning(f"Customer ID: {customer_id}\nNew Street: {street}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the customer street."
+            )
+            self.logger.warning(f"Customer ID: {customer_id}\nNew Street: {street}")
+            self.logger.error(e)
             raise
         return customer.convert_to_dict()
 
@@ -386,9 +411,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the customer city.")
-            logging.warning(f"Customer ID: {customer_id}\nNew City: {city}")
-            logging.error(e)
+            self.logger.warning(
+                "An unhandled error occurred updating the customer city."
+            )
+            self.logger.warning(f"Customer ID: {customer_id}\nNew City: {city}")
+            self.logger.error(e)
             raise
         return customer.convert_to_dict()
 
@@ -403,11 +430,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred updating the customer province."
             )
-            logging.warning(f"Customer ID: {customer_id}\nNew Province: {province}")
-            logging.error(e)
+            self.logger.warning(f"Customer ID: {customer_id}\nNew Province: {province}")
+            self.logger.error(e)
             raise
         return customer.convert_to_dict()
 
@@ -422,13 +449,13 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred updating the customer postal code."
             )
-            logging.warning(
+            self.logger.warning(
                 f"Customer ID: {customer_id}\nNew Postal Code: {postal_code}"
             )
-            logging.error(e)
+            self.logger.error(e)
             raise
         return customer.convert_to_dict()
 
@@ -439,9 +466,9 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred deleting the customer.")
-            logging.warning(f"Customer ID: {customer_id}")
-            logging.error(e)
+            self.logger.warning("An unhandled error occurred deleting the customer.")
+            self.logger.warning(f"Customer ID: {customer_id}")
+            self.logger.error(e)
             raise
         return True
 
@@ -453,20 +480,20 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred searching for an order.")
-            logging.warning(f"Order ID: {order_id}")
-            logging.error(e)
+            self.logger.warning("An unhandled error occurred searching for an order.")
+            self.logger.warning(f"Order ID: {order_id}")
+            self.logger.error(e)
             raise
         try:
             order_items = self.viewer.view_order_items(session, order_id)
         except EntityNotFound:
             order_items = []
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred looking for order items while searching for an order."
             )
-            logging.warning(f"Order ID: {order_id}")
-            logging.error(e)
+            self.logger.warning(f"Order ID: {order_id}")
+            self.logger.error(e)
             raise
 
         orderitems = []
@@ -543,13 +570,13 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred updating the order payment method."
             )
-            logging.warning(
+            self.logger.warning(
                 f"Order ID: {order_id}\nNew Payment Method: {payment_method}"
             )
-            logging.error(e)
+            self.logger.error(e)
             raise
 
         if query_order:
@@ -566,9 +593,9 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating the order type.")
-            logging.warning(f"Order ID: {order_id}\nNew Type: {order_type}")
-            logging.error(e)
+            self.logger.warning("An unhandled error occurred updating the order type.")
+            self.logger.warning(f"Order ID: {order_id}\nNew Type: {order_type}")
+            self.logger.error(e)
             raise
 
         if query_order:
@@ -585,11 +612,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred removing the old order customer."
             )
-            logging.warning(f"Order ID: {order_id}\nCustomer ID: {customer_id}")
-            logging.error(e)
+            self.logger.warning(f"Order ID: {order_id}\nCustomer ID: {customer_id}")
+            self.logger.error(e)
             raise
 
         try:
@@ -597,11 +624,11 @@ class Controller(MySQLBackend):
                 session, customer_id, order_id
             )
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred creating the new order customer."
             )
-            logging.warning(f"Order ID: {order_id}\nCustomer ID: {customer_id}")
-            logging.error(e)
+            self.logger.warning(f"Order ID: {order_id}\nCustomer ID: {customer_id}")
+            self.logger.error(e)
             raise
 
         if query_order:
@@ -618,11 +645,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning(
+            self.logger.warning(
                 "An unhandled error occurred finding the order to add a new order item."
             )
-            logging.warning(f"Order ID: {order_id}")
-            logging.error(e)
+            self.logger.warning(f"Order ID: {order_id}")
+            self.logger.error(e)
             raise
         orderitems = []
         addons = []
@@ -686,11 +713,11 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred updating an order item.")
-            logging.warning(
+            self.logger.warning("An unhandled error occurred updating an order item.")
+            self.logger.warning(
                 f"Order Item ID: {order_item_id}\nFood ID: {food_id}\nPrice: {price}"
             )
-            logging.error(e)
+            self.logger.error(e)
             raise
 
         if query_order:
@@ -705,9 +732,9 @@ class Controller(MySQLBackend):
         except EntityNotFound:
             return False
         except Exception as e:
-            logging.warning("An unhandled error occurred deleting the order.")
-            logging.warning(f"Order ID: {order_id}")
-            logging.error(e)
+            self.logger.warning("An unhandled error occurred deleting the order.")
+            self.logger.warning(f"Order ID: {order_id}")
+            self.logger.error(e)
             raise
 
         return True

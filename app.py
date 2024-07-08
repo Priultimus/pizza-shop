@@ -9,6 +9,7 @@ from resources import ManageFood, CreateFood
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 app = Flask(__name__)
@@ -53,8 +54,8 @@ api = ExtendedAPI(app)
 
 def log_exception(sender, exception, **extra):
 
-    logging.error(f"An exception occurred: {exception}!!!!")
-    logging.error(f"Extra: {extra}")
+    logger.error(f"An exception occurred: {exception}!!!!")
+    logger.error(f"Extra: {extra}")
 
 
 core = Controller(

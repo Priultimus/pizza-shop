@@ -13,6 +13,7 @@ import logging
 class ManageFood(Resource):
     def __init__(self, core: Controller):
         self.core = core
+        self.logger = logging.getLogger("ManageFood")
 
     def get(self, entity_id):
         entity = self.core.find_food(entity_id)
@@ -41,10 +42,10 @@ class ManageFood(Resource):
         food = self.core.update_food_name(entity_id, data.get("food"))
 
         if not food:
-            logging.error(
+            self.logger.error(
                 "Food entity exists, but when attempted to be updated, the entity was not found."
             )
-            logging.error(f"Entity ID: {entity_id}\nData: {data}")
+            self.logger.error(f"Entity ID: {entity_id}\nData: {data}")
             raise DataInconsistencyError
 
         food_data = data.get("food")
@@ -99,6 +100,7 @@ class ManageFood(Resource):
 class CreateFood(Resource):
     def __init__(self, core: Controller):
         self.core = core
+        self.logger = logging.getLogger("CreateFood")
 
     def post(self):
         data = request.get_json()
