@@ -84,11 +84,9 @@ class Controller(MySQLBackend):
         return food.convert_to_dict()
 
     @handle_session
-    def update_food_name(
-        self, session, food_id: int, food_name: str
-    ) -> Union[dict, bool]:
+    def update_food_name(self, session, food_id: int, food_name: str) -> bool:
         try:
-            food = self.manager.update_food(session, food_id, food_name=food_name)
+            self.manager.update_food(session, food_id, food_name=food_name)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -98,12 +96,12 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Food ID: {food_id} New Name: {food_name}")
             raise
 
-        return food.convert_to_dict()
+        return True
 
     @handle_session
-    def update_food_price(self, session, food_id: int, price: int) -> Union[dict, bool]:
+    def update_food_price(self, session, food_id: int, price: int) -> bool:
         try:
-            food = self.manager.update_food(session, food_id, price=price)
+            self.manager.update_food(session, food_id, price=price)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -113,14 +111,12 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Food ID: {food_id} New Price: {price}")
             raise
 
-        return food.convert_to_dict()
+        return True
 
     @handle_session
-    def update_food_category(
-        self, session, food_id: int, category: str
-    ) -> Union[dict, bool]:
+    def update_food_category(self, session, food_id: int, category: str) -> bool:
         try:
-            food = self.manager.update_food(session, food_id, category=category)
+            self.manager.update_food(session, food_id, category=category)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -130,14 +126,12 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Food ID: {food_id} New Category: {category}")
             raise
 
-        return food.convert_to_dict()
+        return True
 
     @handle_session
-    def update_food_size(
-        self, session, food_id: int, food_size: str
-    ) -> Union[dict, bool]:
+    def update_food_size(self, session, food_id: int, food_size: str) -> bool:
         try:
-            food = self.manager.update_food(session, food_id, food_size=food_size)
+            self.manager.update_food(session, food_id, food_size=food_size)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -147,7 +141,7 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Food ID: {food_id} New Size: {food_size}")
             raise
 
-        return food.convert_to_dict()
+        return True
 
     @handle_session
     def delete_food(self, session, food_id: int) -> bool:
@@ -197,11 +191,9 @@ class Controller(MySQLBackend):
         return addon.convert_to_dict()
 
     @handle_session
-    def update_addon_name(
-        self, session, addon_id: int, addon_name: str
-    ) -> Union[dict, bool]:
+    def update_addon_name(self, session, addon_id: int, addon_name: str) -> bool:
         try:
-            addon = self.manager.update_addon(session, addon_id, addon_name=addon_name)
+            self.manager.update_addon(session, addon_id, addon_name=addon_name)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -211,14 +203,12 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Addon ID: {addon_id} New Name: {addon_name}")
             raise
 
-        return addon.convert_to_dict()
+        return True
 
     @handle_session
-    def update_addon_price(
-        self, session, addon_id: int, price: int
-    ) -> Union[dict, bool]:
+    def update_addon_price(self, session, addon_id: int, price: int) -> bool:
         try:
-            addon = self.manager.update_addon(session, addon_id, price=price)
+            self.manager.update_addon(session, addon_id, price=price)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -228,14 +218,12 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Addon ID: {addon_id} New Price: {price}")
             raise
 
-        return addon.convert_to_dict()
+        return True
 
     @handle_session
-    def update_addon_size(
-        self, session, addon_id: int, addon_size: str
-    ) -> Union[dict, bool]:
+    def update_addon_size(self, session, addon_id: int, addon_size: str) -> bool:
         try:
-            addon = self.manager.update_addon(session, addon_id, addon_size=addon_size)
+            self.manager.update_addon(session, addon_id, addon_size=addon_size)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -245,7 +233,7 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Addon ID: {addon_id} New Size: {addon_size}")
             raise
 
-        return addon.convert_to_dict()
+        return True
 
     @handle_session
     def delete_addon(self, session, addon_id: int) -> bool:
@@ -303,11 +291,9 @@ class Controller(MySQLBackend):
         return customer.convert_to_dict()
 
     @handle_session
-    def update_customer_name(
-        self, session, customer_id: int, name: str
-    ) -> Union[dict, bool]:
+    def update_customer_name(self, session, customer_id: int, name: str) -> bool:
         try:
-            customer = self.manager.update_customer(session, customer_id, name=name)
+            self.manager.update_customer(session, customer_id, name=name)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -317,14 +303,12 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Customer ID: {customer_id} New Name: {name}")
             raise
 
-        return customer.convert_to_dict()
+        return True
 
     @handle_session
-    def update_customer_phone(
-        self, session, customer_id: int, phone: int
-    ) -> Union[dict, bool]:
+    def update_customer_phone(self, session, customer_id: int, phone: int) -> bool:
         try:
-            customer = self.manager.update_customer(session, customer_id, phone=phone)
+            self.manager.update_customer(session, customer_id, phone=phone)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -334,14 +318,14 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Customer ID: {customer_id} New Phone: {phone}")
             raise
 
-        return customer.convert_to_dict()
+        return True
 
     @handle_session
     def update_customer_address(
         self, session, customer_id: int, customer_address: dict
-    ) -> Union[dict, bool]:
+    ) -> bool:
         try:
-            customer = self.manager.update_customer(
+            self.manager.update_customer(
                 session,
                 customer_id,
                 customer_stress=customer_address.get("street"),
@@ -366,16 +350,12 @@ class Controller(MySQLBackend):
             )
             raise
 
-        return customer.convert_to_dict()
+        return True
 
     @handle_session
-    def update_customer_street(
-        self, session, customer_id: int, street: str
-    ) -> Union[dict, bool]:
+    def update_customer_street(self, session, customer_id: int, street: str) -> bool:
         try:
-            customer = self.manager.update_customer(
-                session, customer_id, customer_stress=street
-            )
+            self.manager.update_customer(session, customer_id, customer_stress=street)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -385,16 +365,12 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Customer ID: {customer_id} New Street: {street}")
             raise
 
-        return customer.convert_to_dict()
+        return True
 
     @handle_session
-    def update_customer_city(
-        self, session, customer_id: int, city: str
-    ) -> Union[dict, bool]:
+    def update_customer_city(self, session, customer_id: int, city: str) -> bool:
         try:
-            customer = self.manager.update_customer(
-                session, customer_id, customer_city=city
-            )
+            self.manager.update_customer(session, customer_id, customer_city=city)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -404,14 +380,14 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Customer ID: {customer_id} New City: {city}")
             raise
 
-        return customer.convert_to_dict()
+        return True
 
     @handle_session
     def update_customer_province(
         self, session, customer_id: int, province: str
-    ) -> Union[dict, bool]:
+    ) -> bool:
         try:
-            customer = self.manager.update_customer(
+            self.manager.update_customer(
                 session, customer_id, customer_province=province
             )
         except EntityNotFound:
@@ -423,14 +399,14 @@ class Controller(MySQLBackend):
             self.logger.warning(f"Customer ID: {customer_id} New Province: {province}")
             raise
 
-        return customer.convert_to_dict()
+        return True
 
     @handle_session
     def update_customer_postal_code(
         self, session, customer_id: int, postal_code: str
-    ) -> Union[dict, bool]:
+    ) -> bool:
         try:
-            customer = self.manager.update_customer(
+            self.manager.update_customer(
                 session, customer_id, customer_postal_code=postal_code
             )
         except EntityNotFound:
@@ -444,7 +420,7 @@ class Controller(MySQLBackend):
             )
             raise
 
-        return customer.convert_to_dict()
+        return True
 
     @handle_session
     def delete_customer(self, session, customer_id: int) -> bool:
@@ -546,9 +522,9 @@ class Controller(MySQLBackend):
     @handle_session
     def update_order_payment_method(
         self, session, order_id: int, payment_method: str, query_order=False
-    ) -> Union[dict, bool]:
+    ) -> bool:
         try:
-            order = self.manager.update_order(
+            self.manager.update_order(
                 session, order_id, payment_method=payment_method
             ).convert_to_dict()
         except EntityNotFound:
@@ -684,12 +660,9 @@ class Controller(MySQLBackend):
     @handle_session
     def update_order_item(
         self, session, order_item_id: int, food_id: int, price: int, query_order=False
-    ) -> Union[dict, bool]:
+    ) -> bool:
         try:
-            order_item = self.manager.update_order_item(
-                session, order_item_id, food_id, price
-            )
-            order_id = order_item.order_id
+            self.manager.update_order_item(session, order_item_id, food_id, price)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -700,6 +673,7 @@ class Controller(MySQLBackend):
             raise
 
         if query_order:
+            order_id = self.viewer.view_order_item(session, order_item_id).order_id
             return self.find(session, order_id)
 
         return True
