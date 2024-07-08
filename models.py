@@ -260,7 +260,7 @@ class ManageResturantData:
             .filter(Food.food_id == food_id)
             .update(update_dict, synchronize_session=False)
         )
-        session.commit(update)
+        session.commit()
         return update
 
     def remove_food(self, session: Session, food_id: int) -> sqlalchemy.orm.query.Query:
@@ -330,7 +330,7 @@ class ManageResturantData:
             .filter(Addon.addon_id == addon_id)
             .update(update_dict, synchronize_session=False)
         )
-        session.commit(update)
+        session.commit()
         return update
 
     def remove_addon(
@@ -398,7 +398,7 @@ class ManageResturantData:
             .filter(Customer.customer_id == customer_id)
             .update(update_dict, synchronize_session=False)
         )
-        session.commit(update)
+        session.commit()
         return update
 
     def remove_customer(self, session: Session, customer_id: int):
@@ -452,7 +452,7 @@ class ManageResturantData:
             .filter(Order.order_id == order_id)
             .update(update_dict, synchronize_session=False)
         )
-        session.commit(update)
+        session.commit()
         return update
 
     def remove_order(self, session: Session, order_id: int):
@@ -536,7 +536,7 @@ class ManageResturantData:
             .filter(OrderItem.order_item_id == order_item_id)
             .update(update_dict, synchronize_session=False)
         )
-        session.commit(update)
+        session.commit()
         return update
 
     def find_all_order_items(self, session: Session, order_id: int) -> list:
@@ -603,7 +603,7 @@ class ManageResturantData:
             .filter(ItemMod.addon_id == addon_id)
             .update(update_dict, synchronize_session=False)
         )
-        session.commit(update)
+        session.commit()
         return update
 
     def remove_item_mod(self, session: Session, order_item_id: int, addon_id: int):
