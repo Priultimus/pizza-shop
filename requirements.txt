@@ -2,3 +2,4 @@ sqlalchemy
 flask
 flask-restful
 mysql-connector-python
+psycopg[binary]
