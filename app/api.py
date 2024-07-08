@@ -1,18 +1,11 @@
-from flask import request, jsonify
-from flask import Flask
-from flask_restful import Api
-from core import Controller
-from errors import GENERIC_SERVER_ERROR
-from werkzeug.exceptions import HTTPException
-from werkzeug.http import HTTP_STATUS_CODES
-from resources import CreateFood, CreateAddon, ManageFood, ManageAddon
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+from flask import jsonify
+from flask_restful import Api
+from werkzeug.exceptions import HTTPException
+from werkzeug.http import HTTP_STATUS_CODES
 
-
-app = Flask(__name__)
+from .errors import GENERIC_SERVER_ERROR
 
 
 class ExtendedAPI(Api):
@@ -27,10 +20,8 @@ class ExtendedAPI(Api):
         """It helps preventing writing unnecessary
         try/except block though out the application
         """
-        handle_error_logger = logging.getLogger("handle_error")
-        handle_error_logger.exception(
-            err
-        )  # log every exception raised in the application
+        logger = logging.getLogger("handle_error")
+        logger.exception(err)  # log every exception raised in the application
         # Handle HTTPExceptions
         if isinstance(err, HTTPException):
             return {
@@ -50,32 +41,3 @@ class ExtendedAPI(Api):
             }, 500
         # Handle application specific custom exceptions
         return jsonify(**err.kwargs), err.http_status_code
-
-
-api = ExtendedAPI(app)
-
-
-def log_exception(sender, exception, **extra):
-
-    logger.error(f"{sender} Triggered an exception: {exception}")
-    logger.error(f"Extra: {extra}")
-
-
-core = Controller(
-    db_url="mysql+mysqlconnector://flask:password@127.0.0.1:3306/pizza_shop"
-)
-
-api.add_resource(CreateFood, "/api/menu/food", resource_class_kwargs={"core": core})
-api.add_resource(
-    ManageFood, "/api/menu/food/<int:entity_id>", resource_class_kwargs={"core": core}
-)
-api.add_resource(CreateAddon, "/api/menu/addon", resource_class_kwargs={"core": core})
-api.add_resource(
-    ManageAddon,
-    "/api/menu/addon/<int:entity_id>",
-    resource_class_kwargs={"core": core},
-)
-
-if __name__ == "__main__":
-    core.bootstrap()
-    app.run(debug=True)

@@ -59,6 +59,14 @@ class MissingFoodSize(GeneralException):
         )
 
 
+class CoreError(GeneralException):
+    pass
+
+
+class CustomerNotFoundError(CoreError):
+    pass
+
+
 class DatabaseException(GeneralException):
     pass
 
