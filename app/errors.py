@@ -38,7 +38,7 @@ class EntryNotFound(GeneralException):
 class MissingEntryData(GeneralException):
     def __init__(self, *args, **kwargs):
         super().__init__(
-            message="Required entry data to is missing",
+            message="Required entry data is missing",
             data={} if not kwargs.get("data") else kwargs.get("data"),
             http_status_code=400,
             code=MISSING_ENTRY_DATA,
