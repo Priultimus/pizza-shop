@@ -12,8 +12,8 @@ Base = declarative_base()
 logger = logging.getLogger(__name__)
 
 
-class MySQLBackend(object):
-    """Represents MySQL backend that manages creating the engine and session."""
+class DatabaseBackend(object):
+    """Represents database backend that manages creating the engine and session."""
 
     def __init__(self, db_creation):
         self.engine = None
@@ -34,9 +34,10 @@ class MySQLBackend(object):
         for i in range(2):
             try:
                 connection = self.engine.connect()
-            except Exception as error:
-                logger.warning("MySQL server connection failed. Retrying...")
+            except Exception as e:
+                logger.warning("Database server connection failed. Retrying...")
                 time.sleep(i * 5)
+                error = e
                 continue
         if not connection:
             raise error

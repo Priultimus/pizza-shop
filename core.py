@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Union, Optional as optional
 
 from sqlalchemy.exc import IntegrityError
-from models import Customer, MySQLBackend, ManageResturantData, ViewResturantData
+from models import Customer, DatabaseBackend, ManageResturantData, ViewResturantData
 from errors import ResturantException, EntityNotFound
 
 
@@ -33,8 +33,8 @@ class CustomerNotFoundError(CoreError):
     pass
 
 
-class Controller(MySQLBackend):
-    """Controller class that inherits from MySQLBackend."""
+class Controller(DatabaseBackend):
+    """Controller class that inherits from PostgreSQLBackend."""
 
     def __init__(self, db_url):
         super(Controller, self).__init__(db_url)
