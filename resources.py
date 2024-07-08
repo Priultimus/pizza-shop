@@ -39,15 +39,6 @@ class ManageFood(Resource):
         if not food_entity:
             raise EntryNotFound
 
-        food = self.core.update_food_name(entity_id, data.get("food"))
-
-        if not food:
-            self.logger.error(
-                "Food entity exists, but when attempted to be updated, the entity was not found."
-            )
-            self.logger.error(f"Entity ID: {entity_id}\nData: {data}")
-            raise DataInconsistencyError
-
         food_data = data.get("food")
 
         if not food_data:
