@@ -32,7 +32,7 @@ class MySQLBackend(object):
         self.engine = create_engine(db_creation, echo=False, pool_recycle=3600)
         self.Session.configure(bind=self.engine)
 
-    def bootstrap(self):
+    def bootstrap(self) -> None:
         """Connects to the engine and creates the relevant tables."""
         connection = None
         error = Exception("Unable to connect to database with an unspecified error.")
@@ -211,7 +211,7 @@ class ManageResturantData:
         food_price: int,
         food_category: str,
         food_size: optional[str] = None,
-    ):
+    ) -> Food:
         """Adds food items to the menu."""
 
         if food_category in self.food_size_required and not food_size:
@@ -227,9 +227,7 @@ class ManageResturantData:
         session.commit()
         return food_details
 
-    def update_food(
-        self, session: Session, food_id: int, **kwargs
-    ) -> sqlalchemy.orm.query.Query:
+    def update_food(self, session: Session, food_id: int, **kwargs) -> int:
         """Updates the value of an attribute of a given food item."""
         entity = session.query(Food).filter(Food.food_id == food_id).first()
         if not entity:
@@ -263,14 +261,14 @@ class ManageResturantData:
         session.commit()
         return update
 
-    def remove_food(self, session: Session, food_id: int) -> sqlalchemy.orm.query.Query:
+    def remove_food(self, session: Session, food_id: int) -> None:
         """Removes a food item from the menu."""
         entity = session.query(Food).filter(Food.food_id == food_id).first()
         if not entity:
             raise EntityNotFound("The food item does not exist in the database.")
         session.delete(entity)
         session.commit()
-        return entity
+        return
 
     def new_addon_item(
         self,
@@ -279,7 +277,7 @@ class ManageResturantData:
         addon_type: str,
         addon_price: int,
         addon_size: optional[str] = None,
-    ) -> sqlalchemy.orm.query.Query:
+    ) -> Addon:
         """Adds addon items to the menu."""
 
         if addon_type in self.food_size_required and not addon_size:
@@ -295,9 +293,7 @@ class ManageResturantData:
         session.commit()
         return addon_details
 
-    def update_addon(
-        self, session: Session, addon_id: int, **kwargs
-    ) -> sqlalchemy.orm.query.Query:
+    def update_addon(self, session: Session, addon_id: int, **kwargs) -> int:
         """Updates the value of an attribute of a given addon."""
         entity = session.query(Addon).filter(Addon.addon_id == addon_id).first()
         if not entity:
@@ -333,16 +329,14 @@ class ManageResturantData:
         session.commit()
         return update
 
-    def remove_addon(
-        self, session: Session, addon_id: int
-    ) -> sqlalchemy.orm.query.Query:
+    def remove_addon(self, session: Session, addon_id: int) -> None:
         """Removes an addon item from the menu."""
         entity = session.query(Addon).filter(Addon.addon_id == addon_id).first()
         if not entity:
             raise EntityNotFound("The addon item does not exist in the database.")
         session.delete(entity)
         session.commit()
-        return entity
+        return
 
     def new_customer(
         self,
@@ -353,7 +347,7 @@ class ManageResturantData:
         customer_city: optional[str] = None,
         customer_province: optional[str] = None,
         customer_postal_code: optional[str] = None,
-    ):
+    ) -> Customer:
         """Adds customer details to the database."""
         customer_details = Customer(
             customer_name=customer_name,
@@ -367,9 +361,7 @@ class ManageResturantData:
         session.commit()
         return customer_details
 
-    def update_customer(
-        self, session: Session, customer_id: int, **kwargs
-    ) -> sqlalchemy.orm.query.Query:
+    def update_customer(self, session: Session, customer_id: int, **kwargs) -> int:
         """Updates the value of an attribute of a given customer."""
         entity = (
             session.query(Customer).filter(Customer.customer_id == customer_id).first()
@@ -401,7 +393,7 @@ class ManageResturantData:
         session.commit()
         return update
 
-    def remove_customer(self, session: Session, customer_id: int):
+    def remove_customer(self, session: Session, customer_id: int) -> None:
         """Removes a customer from the database."""
         entity = (
             session.query(Customer).filter(Customer.customer_id == customer_id).first()
@@ -410,11 +402,11 @@ class ManageResturantData:
             raise EntityNotFound("The customer does not exist in the database.")
         session.delete(entity)
         session.commit()
-        return entity
+        return
 
     def new_order(
         self, session: Session, order_date, order_payment_method: str, order_type: str
-    ) -> dict:
+    ) -> Order:
         """Adds order details to the database."""
         order_details = Order(
             order_date=order_date,
@@ -423,9 +415,9 @@ class ManageResturantData:
         )
         session.add(order_details)
         session.commit()
-        return order_details.to_dict()
+        return order_details
 
-    def update_order(self, session: Session, order_id: int, **kwargs):
+    def update_order(self, session: Session, order_id: int, **kwargs) -> int:
         """Updates the value of an attribute of a given order."""
         entity = session.query(Order).filter(Order.order_id == order_id).first()
         if not entity:
@@ -455,21 +447,18 @@ class ManageResturantData:
         session.commit()
         return update
 
-    def remove_order(self, session: Session, order_id: int):
+    def remove_order(self, session: Session, order_id: int) -> None:
         """Removes an order from the database."""
         entity = session.query(Order).filter(Order.order_id == order_id).first()
         if not entity:
             raise EntityNotFound("The order does not exist in the database.")
-        try:
-            session.delete(entity)
-            session.commit()
-        except Exception as e:
-            logger.error(f"Error: {e}")
-            return False
-            # XXX: If I knew what kind of errors would occur, here would be a good place to ensure data consistency.
-        return True
+        session.delete(entity)
+        session.commit()
+        return
 
-    def new_customer_order(self, session: Session, customer_id: int, order_id: int):
+    def new_customer_order(
+        self, session: Session, customer_id: int, order_id: int
+    ) -> CustomerOrder:
         """Adds customer order details to the database."""
         customer_order_details = CustomerOrder(
             customer_id=customer_id, order_id=order_id
@@ -478,7 +467,9 @@ class ManageResturantData:
         session.commit()
         return customer_order_details
 
-    def remove_customer_order(self, session: Session, customer_id: int, order_id: int):
+    def remove_customer_order(
+        self, session: Session, customer_id: int, order_id: int
+    ) -> None:
         """Removes a customer order from the database."""
         entity = (
             session.query(CustomerOrder)
@@ -490,7 +481,7 @@ class ManageResturantData:
             raise EntityNotFound("The customer order does not exist in the database.")
         session.delete(entity)
         session.commit()
-        return entity
+        return
 
     def new_order_item(
         self, session: Session, order_id: int, food_id: int, order_item_price: int
@@ -503,9 +494,7 @@ class ManageResturantData:
         session.commit()
         return order_item_details
 
-    def update_order_item(
-        self, session: Session, order_item_id: int, **kwargs
-    ) -> OrderItem:
+    def update_order_item(self, session: Session, order_item_id: int, **kwargs) -> int:
         """Updates the value of an attribute of a given order item."""
         entity = (
             session.query(OrderItem)
@@ -546,7 +535,7 @@ class ManageResturantData:
             raise EntityNotFound("The order does not have any items.")
         return [item.convert_to_dict() for item in entity]
 
-    def remove_order_item(self, session: Session, order_item_id: int):
+    def remove_order_item(self, session: Session, order_item_id: int) -> None:
         """Removes an order item from the database."""
         entity = (
             session.query(OrderItem)
@@ -557,7 +546,7 @@ class ManageResturantData:
             raise EntityNotFound("The order item does not exist in the database.")
         session.delete(entity)
         session.commit()
-        return entity
+        return
 
     def new_item_mod(
         self,
@@ -566,7 +555,7 @@ class ManageResturantData:
         addon_id: int,
         item_mod_qty: int,
         item_mod_price: int,
-    ):
+    ) -> ItemMod:
         """Adds item modification details to the database."""
         item_mod_details = ItemMod(
             order_item_id=order_item_id,
@@ -580,7 +569,7 @@ class ManageResturantData:
 
     def update_item_mod(
         self, session: Session, order_item_id: int, addon_id: int, **kwargs
-    ):
+    ) -> int:
         required = [
             column.name
             for column in inspect(ItemMod).c
@@ -606,7 +595,9 @@ class ManageResturantData:
         session.commit()
         return update
 
-    def remove_item_mod(self, session: Session, order_item_id: int, addon_id: int):
+    def remove_item_mod(
+        self, session: Session, order_item_id: int, addon_id: int
+    ) -> None:
         """Removes an item modification from the database."""
         entity = (
             session.query(ItemMod)
@@ -620,7 +611,7 @@ class ManageResturantData:
             )
         session.delete(entity)
         session.commit()
-        return entity
+        return
 
 
 class ViewResturantData:
