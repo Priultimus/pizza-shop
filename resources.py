@@ -56,13 +56,13 @@ class ManageFood(Resource):
         total_values = 0
         success = True
 
-        if food_data.get("food_name"):
-            print(food_data.get("food_name"))
+        if food_data.get("name"):
+            print(food_data.get("name"))
             total_values += 1
-            result = self.core.update_food_name(entity_id, food_data.get("food_name"))
+            result = self.core.update_food_name(entity_id, food_data.get("name"))
             if not result:
                 success = False
-                failure.append("food_name")
+                failure.append("name")
 
         if food_data.get("price"):
             total_values += 1
@@ -80,12 +80,12 @@ class ManageFood(Resource):
                 success = False
                 failure.append("category")
 
-        if food_data.get("food_size"):
+        if food_data.get("size"):
             total_values += 1
-            result = self.core.update_food_size(entity_id, food_data.get("food_size"))
+            result = self.core.update_food_size(entity_id, food_data.get("size"))
             if not result:
                 success = False
-                failure.append("food_size")
+                failure.append("size")
 
         if success:
             return {"success": True, "message": "", "code": 0, "data": {}}
@@ -103,13 +103,13 @@ class CreateFood(Resource):
     def post(self):
         data = request.get_json()
         food_data = data.get("food")
-        if not food_data or not {"food_name", "price", "category"} <= set(food_data):
+        if not food_data or not {"name", "price", "category"} <= set(food_data):
             raise MissingFoodData
         food = self.core.create_food(
-            food_data.get("food_name"),
+            food_data.get("name"),
             food_data.get("price"),
             food_data.get("category"),
-            food_size=food_data.get("food_size"),
+            food_size=food_data.get("size"),
         )
         if food:
             return {"success": True, "message": "", "code": 0, "data": food}
