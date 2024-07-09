@@ -36,8 +36,7 @@ class ExtendedAPI(Api):
             "message": getattr(err, "message", "An unexpected error occurred"),
             "code": getattr(err, "code", GENERIC_SERVER_ERROR),
         }, getattr(err, "http_status_code", 500)
-
-        if not response["code"] in [
+        if not response[0]["code"] in [
             ENTRY_NOT_FOUND,
             MISSING_ENTRY_DATA,
         ]:  # common errors
