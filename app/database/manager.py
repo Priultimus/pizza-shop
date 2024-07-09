@@ -47,7 +47,7 @@ class ManageResturantData:
         ]
         if not any(i in kwargs for i in required):
             raise ValueError(
-                f"Expected at least one attribute of Food entity.\nThese are:\n{'\n'.join(required)}"
+                f"Expected at least one attribute of Food entity.\nThese are as follows:\n{'\n'.join(required)}"
             )
 
         if (
@@ -112,7 +112,7 @@ class ManageResturantData:
         ]
         if not any(i in kwargs for i in required):
             raise ValueError(
-                f"Expected at least one attribute of Addon entity.\nThese are:\n{'\n'.join(required)}"
+                f"Expected at least one attribute of Addon entity. These are as follows:\n{'\n'.join(required)}"
             )
 
         if (
@@ -178,7 +178,7 @@ class ManageResturantData:
         ]
         if not any(i in kwargs for i in required):
             raise ValueError(
-                f"Expected at least one attribute of Customer entity.\nThese are:\n{'\n'.join(required)}"
+                f"Expected at least one attribute of Customer entity.\nThese are as follows:\n{'\n'.join(required)}"
             )
 
         update_dict = {}
@@ -228,7 +228,7 @@ class ManageResturantData:
         ]
         if not any(i in kwargs for i in required):
             raise ValueError(
-                f"Expected at least one attribute of Order entity.\nThese are:\n{'\n'.join(required)}"
+                f"Expected at least one attribute of Order entity.\nThese are as follows:\n{'\n'.join(required)}"
             )
 
         update_dict = {}
@@ -300,7 +300,7 @@ class ManageResturantData:
         ]
         if not any(i in kwargs for i in required):
             raise ValueError(
-                f"Expected at least one attribute of OrderItem entity.\nThese are:\n{'\n'.join(required)}"
+                f"Expected at least one attribute of OrderItem entity.\nThese are as follows:\n{'\n'.join(required)}"
             )
 
         update_dict = {}
@@ -359,7 +359,7 @@ class ManageResturantData:
         ]
         if not any(i in kwargs for i in required):
             raise ValueError(
-                f"Expected at least one attribute of ItemMod entity.\nThese are:\n{'\n'.join(required)}"
+                f"Expected at least one attribute of ItemMod entity.\nThese are as follows:\n{'\n'.join(required)}"
             )
 
         update_dict = {}
