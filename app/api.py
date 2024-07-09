@@ -17,15 +17,8 @@ class ExtendedAPI(Api):
         super().__init__(*args, **kwargs)
 
     def handle_error(self, err):
-        """It helps preventing writing unnecessary
-        try/except block though out the application
-        """
+        """Handle all errors through the program, logs them and returns JSON error"""
         logger = logging.getLogger("handle_error")
-        if not getattr(err, "code", None) in [
-            ENTRY_NOT_FOUND,
-            MISSING_ENTRY_DATA,
-        ]:  # common errors
-            logger.exception(err)
         # Handle HTTPExceptions
         if isinstance(err, HTTPException):
             return {
@@ -33,15 +26,21 @@ class ExtendedAPI(Api):
                 "message": getattr(
                     err, "description", HTTP_STATUS_CODES.get(err.code, "")
                 ),
-            }, err.code
-        # If msg attribute is not set,
-        # consider it as Python core exception and
-        # hide sensitive error info from end user
-        if not getattr(err, "message", None):
-            return {
-                "success": False,
-                "message": "An unexpected error occurred",
                 "code": GENERIC_SERVER_ERROR,
-            }, 500
-        # Handle application specific custom exceptions
-        return jsonify(**err.kwargs), err.http_status_code
+            }, err.code
+
+        # If message & code attributes are not set, consider it as Python core exception and hide sensitive error info from end user
+        # Otherwise, handle application specific custom exceptions
+        response = {
+            "success": getattr(err, "success", False),
+            "message": getattr(err, "message", "An unexpected error occurred"),
+            "code": getattr(err, "code", GENERIC_SERVER_ERROR),
+        }, getattr(err, "http_status_code", 500)
+
+        if not response["code"] in [
+            ENTRY_NOT_FOUND,
+            MISSING_ENTRY_DATA,
+        ]:  # common errors
+            logger.exception(err)
+
+        return response
