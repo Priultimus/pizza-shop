@@ -5,7 +5,7 @@ from flask_restful import Api
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
 
-from .errors import GENERIC_SERVER_ERROR
+from .errors import GENERIC_SERVER_ERROR, ENTRY_NOT_FOUND, MISSING_ENTRY_DATA
 
 
 class ExtendedAPI(Api):
@@ -21,7 +21,8 @@ class ExtendedAPI(Api):
         try/except block though out the application
         """
         logger = logging.getLogger("handle_error")
-        logger.exception(err)  # log every exception raised in the application
+        if not err.code in [ENTRY_NOT_FOUND, MISSING_ENTRY_DATA]:  # common errors
+            logger.exception(err)
         # Handle HTTPExceptions
         if isinstance(err, HTTPException):
             return {
