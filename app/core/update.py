@@ -28,7 +28,7 @@ class Update:
 
     def food_price(self, food_id: int, price: int) -> bool:
         try:
-            self.manager.update_food(food_id, price=price)
+            self.manager.update_food(food_id, food_price=price)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -42,7 +42,7 @@ class Update:
 
     def food_category(self, food_id: int, category: str) -> bool:
         try:
-            self.manager.update_food(food_id, category=category)
+            self.manager.update_food(food_id, food_category=category)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -96,7 +96,7 @@ class Update:
 
     def addon_price(self, addon_id: int, price: int) -> bool:
         try:
-            self.manager.update_addon(addon_id, price=price)
+            self.manager.update_addon(addon_id, addon_price=price)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -124,7 +124,7 @@ class Update:
 
     def customer_name(self, customer_id: int, name: str) -> bool:
         try:
-            self.manager.update_customer(customer_id, name=name)
+            self.manager.update_customer(customer_id, customer_name=name)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -138,7 +138,7 @@ class Update:
 
     def customer_phone(self, customer_id: int, phone: int) -> bool:
         try:
-            self.manager.update_customer(customer_id, phone=phone)
+            self.manager.update_customer(customer_id, customer_phone=phone)
         except EntityNotFound:
             return False
         except Exception as e:
@@ -241,7 +241,7 @@ class Update:
     ) -> bool:
         try:
             self.manager.update_order(
-                order_id, payment_method=payment_method
+                order_id, order_payment_method=payment_method
             ).convert_to_dict()
         except EntityNotFound:
             return False
@@ -308,7 +308,9 @@ class Update:
         self, order_item_id: int, food_id: int, price: int, query_order=False
     ) -> bool:
         try:
-            self.manager.update_order_item(order_item_id, food_id, price)
+            self.manager.update_order_item(
+                order_item_id, food_id=food_id, order_item_price=price
+            )
         except EntityNotFound:
             return False
         except Exception as e:
