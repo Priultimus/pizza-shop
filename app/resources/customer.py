@@ -18,7 +18,12 @@ class CreateCustomer(Resource):
     def post(self):
         data = request.get_json()
         customer_data = data.get("customer")
-        if not customer_data or not {"name", "address", "phone"} <= set(customer_data):
+        if not (
+            customer_data
+            or {"name", "address", "phone"} <= set(customer_data)
+            or {"street", "city", "province", "postal_code"}
+            <= set(customer_data.get("address"))
+        ):
             raise MissingEntryData
 
         customer = core.create.customer(
@@ -79,15 +84,15 @@ class ManageCustomer(Resource):
                 failure.append("address")
                 success = False
 
-        if success:
-            return {
-                "success": True,
-                "message": "",
-                "code": 0,
-                "data": core.find.customer(customer_id),
-            }
+        if not total_values:
+            raise MissingEntryData
 
         if len(failure) == total_values:
             raise EntryNotFound
+
+        data = core.find.customer(customer_id)
+
+        if success and data:
+            return {"success": True, "message": "", "code": 0, "data": data}
 
         raise DataInconsistencyError

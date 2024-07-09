@@ -33,26 +33,26 @@ class ManageAddon(Resource):
     def __init__(self):
         self.logger = logging.getLogger("ManageAddon")
 
-    def get(self, entity_id):
-        entity = core.find.addon(entity_id)
+    def get(self, addon_id):
+        entity = core.find.addon(addon_id)
         if entity:
             return {"success": True, "message": "", "code": 0, "data": entity}
         else:
             raise EntryNotFound
 
-    def delete(self, entity_id):
-        addon = core.delete.addon(entity_id)
+    def delete(self, addon_id):
+        addon = core.delete.addon(addon_id)
         if not addon:
             raise EntryNotFound
         return {"success": True, "message": "", "code": 0, "data": {}}
 
-    def put(self, entity_id):
+    def put(self, addon_id):
         data = request.get_json()
         if not data.get("addon"):
             raise MissingEntryData
         addon_data = data.get("addon")
 
-        addon_entity = core.find.addon(entity_id)
+        addon_entity = core.find.addon(addon_id)
         if not addon_entity:
             raise EntryNotFound
 
@@ -67,36 +67,41 @@ class ManageAddon(Resource):
 
         if addon_data.get("name"):
             total_values += 1
-            result = core.update.addon_name(entity_id, addon_data.get("name"))
+            result = core.update.addon_name(addon_id, addon_data.get("name"))
             if not result:
                 success = False
                 failure.append("name")
 
         if addon_data.get("type"):
             total_values += 1
-            result = core.update.addon_type(entity_id, addon_data.get("type"))
+            result = core.update.addon_type(addon_id, addon_data.get("type"))
             if not result:
                 success = False
                 failure.append("type")
 
         if addon_data.get("price"):
             total_values += 1
-            result = core.update.addon_price(entity_id, addon_data.get("price"))
+            result = core.update.addon_price(addon_id, addon_data.get("price"))
             if not result:
                 success = False
                 failure.append("price")
 
         if addon_data.get("size"):
             total_values += 1
-            result = core.update.addon_size(entity_id, addon_data.get("size"))
+            result = core.update.addon_size(addon_id, addon_data.get("size"))
             if not result:
                 success = False
                 failure.append("size")
 
-        if success:
-            return {"success": True, "message": "", "code": 0, "data": {}}
+        if not total_values:
+            raise MissingEntryData
 
         if len(failure) == total_values:
             raise EntryNotFound
+
+        data = core.find.addon(addon_id)
+
+        if success and data:
+            return {"success": True, "message": "", "code": 0, "data": data}
 
         raise DataInconsistencyError

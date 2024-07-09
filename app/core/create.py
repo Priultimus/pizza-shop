@@ -36,27 +36,31 @@ class Create:
 
         return food.convert_to_dict()
 
-    def addon(self, addon_name: str, addon_type: str, price, addon_size=None):
+    def addon(
+        self, addon_name: str, addon_type: str, addon_price, addon_size=None
+    ) -> dict:
         try:
             addon = self.manager.new_addon_item(
-                addon_name, addon_type, price, addon_size=addon_size
+                addon_name, addon_type, addon_price, addon_size=addon_size
             )
         except Exception as e:
             self.logger.warning(
                 "An unhandled error occurred creating a new addon item."
             )
             self.logger.warning(
-                f"Name: {addon_name} Price: {price} Addon Size: {addon_size}"
+                f"Name: {addon_name} Price: {addon_price} Addon Size: {addon_size}"
             )
             raise
 
         return addon.convert_to_dict()
 
-    def customer(self, name: str, phone: int, customer_address: dict = {}) -> dict:
+    def customer(
+        self, customer_name: str, customer_phone: int, customer_address: dict = {}
+    ) -> dict:
         try:
             customer = self.manager.new_customer(
-                name,
-                phone,
+                customer_name,
+                customer_phone,
                 customer_street=customer_address.get("street"),
                 customer_city=customer_address.get("city"),
                 customer_province=customer_address.get("province"),
@@ -65,7 +69,7 @@ class Create:
         except Exception as e:
             self.logger.warning("An unhandled error occurred creating a new customer.")
             self.logger.warning(
-                f"Name: {name} Phone: {phone} Address: {customer_address}"
+                f"Name: {customer_name} Phone: {customer_phone} Address: {customer_address}"
             )
             self.logger.warning(
                 f"Customer Street: {customer_address.get('street')} Customer City: {customer_address.get('city')}"
@@ -83,11 +87,11 @@ class Create:
         order_items: dict,
         payment_method: str,
         order_type: str,
-    ) -> dict:
+    ) -> Union[dict, bool]:
         order = self.manager.new_order(datetime.now(), payment_method, order_type)
         customer = self.viewer.view_customer(customer_id)
         if not customer:
-            raise CustomerNotFoundError(f'The customer "{customer_id}" does not exist.')
+            return False
         order_id = order.order_id
         self.manager.new_customer_order(customer_id, order_id)
         orderitems = []

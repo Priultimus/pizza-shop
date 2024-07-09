@@ -88,10 +88,15 @@ class ManageFood(Resource):
                 success = False
                 failure.append("size")
 
-        if success:
-            return {"success": True, "message": "", "code": 0, "data": {}}
+        if not total_values:
+            return MissingEntryData
 
         if len(failure) == total_values:
             raise EntryNotFound
+
+        data = core.find.food(entity_id)
+
+        if success and data:
+            return {"success": True, "message": "", "code": 0, "data": data}
 
         raise DataInconsistencyError
