@@ -83,5 +83,5 @@ class EntityNotFound(DatabaseException):
     pass
 
 
-class DataInconsistencyError(Exception):
+class DataInconsistencyError(DatabaseException):
     pass
