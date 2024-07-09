@@ -18,7 +18,14 @@ def init_app():
     db.init_app(app)
 
     with app.app_context():
-        from .resources import CreateFood, CreateAddon, ManageFood, ManageAddon
+        from .resources import (
+            CreateFood,
+            CreateAddon,
+            CreateCustomer,
+            ManageFood,
+            ManageAddon,
+            ManageCustomer,
+        )
         from .api import ExtendedAPI
 
         db.create_all()
@@ -27,4 +34,6 @@ def init_app():
         api.add_resource(ManageFood, "/api/menu/food/<int:entity_id>")
         api.add_resource(CreateAddon, "/api/menu/addon")
         api.add_resource(ManageAddon, "/api/menu/addon/<int:entity_id>")
+        api.add_resource(CreateCustomer, "/api/customer")
+        api.add_resource(ManageCustomer, "/api/customer/<int:customer_id>")
         return app
