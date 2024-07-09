@@ -29,7 +29,7 @@ def init_app():
         from .api import ExtendedAPI
 
         db.create_all()
-        api = ExtendedAPI(app)
+        api = ExtendedAPI(app, catch_all_404s=True)
         api.add_resource(CreateFood, "/api/menu/food")
         api.add_resource(ManageFood, "/api/menu/food/<int:entity_id>")
         api.add_resource(CreateAddon, "/api/menu/addon")
