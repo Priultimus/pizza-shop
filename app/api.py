@@ -26,6 +26,7 @@ class ExtendedAPI(Api):
                 "message": getattr(
                     err, "description", HTTP_STATUS_CODES.get(err.code, "")
                 ),
+                "data": {},
                 "code": GENERIC_SERVER_ERROR,
             }, err.code
 
@@ -34,6 +35,7 @@ class ExtendedAPI(Api):
         response = {
             "success": getattr(err, "success", False),
             "message": getattr(err, "message", "An unexpected error occurred"),
+            "data": getattr(err, "data", {}),  # additional data (if any)
             "code": getattr(err, "code", GENERIC_SERVER_ERROR),
         }, getattr(err, "http_status_code", 500)
         if not response[0]["code"] in [
