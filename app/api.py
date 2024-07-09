@@ -21,7 +21,10 @@ class ExtendedAPI(Api):
         try/except block though out the application
         """
         logger = logging.getLogger("handle_error")
-        if not err.code in [ENTRY_NOT_FOUND, MISSING_ENTRY_DATA]:  # common errors
+        if not getattr(err, "code", None) in [
+            ENTRY_NOT_FOUND,
+            MISSING_ENTRY_DATA,
+        ]:  # common errors
             logger.exception(err)
         # Handle HTTPExceptions
         if isinstance(err, HTTPException):
