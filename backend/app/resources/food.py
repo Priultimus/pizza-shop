@@ -6,9 +6,11 @@ from flask import request
 from .. import core
 from ..errors import (
     EntryNotFound,
+    ImproperEntryData,
     MissingFoodSize,
     DataInconsistencyError,
     MissingEntryData,
+    PARTIAL_SUCCESS
 )
 
 
@@ -21,7 +23,7 @@ class CreateFood(Resource):
         food_data = data.get("food")
         if not food_data or not {"name", "price", "category"} <= set(food_data):
             raise MissingEntryData
-        food = core.creator.food(
+        food = core.create.food(
             food_data.get("name"),
             food_data.get("price"),
             food_data.get("category"),
@@ -38,17 +40,22 @@ class ManageFood(Resource):
         self.logger = logging.getLogger("ManageFood")
 
     def get(self, entity_id):
-        entity = core.finder.food(entity_id)
+        entity = core.find.food(entity_id)
         if entity:
             return {"success": True, "message": "", "code": 0, "data": entity}
         else:
             raise EntryNotFound
 
     def delete(self, entity_id):
-        food = core.deletor.food(entity_id)
+        food = core.delete.food(entity_id)
         if not food:
             raise EntryNotFound
-        return {"success": True, "message": "", "code": 0, "data": {}}
+        return {
+            "success": True, 
+            "message": "", 
+            "code": 0, 
+            "data": {}
+            }, 204
 
     def put(self, entity_id):
         data = request.get_json()
@@ -56,47 +63,55 @@ class ManageFood(Resource):
         if not food_data:
             raise MissingEntryData
 
-        food_entity = core.finder.food(entity_id)
+        food_entity = core.find.food(entity_id)
         if not food_entity:
             raise EntryNotFound
 
-        failure = []
-        total_values = 0
-        success = True
+        attempted_entries = {}
 
         if food_data.get("name"):
-            total_values += 1
-            if not core.updater.food_name(entity_id, food_data.get("name")):
-                success = False
-                failure.append("name")
+            attempted_entries["name"] = True
+            if not core.update.food_name(entity_id, food_data.get("name")):
+                attempted_entries["name"] = False
 
         if food_data.get("price"):
-            total_values += 1
-            if not core.updater.food_price(entity_id, food_data.get("price")):
-                success = False
-                failure.append("price")
+            attempted_entries["price"] = True
+            if not core.update.food_price(entity_id, food_data.get("price")):
+                attempted_entries["price"] = False
 
         if food_data.get("category"):
-            total_values += 1
-            if not core.updater.food_category(entity_id, food_data.get("category")):
-                success = False
-                failure.append("category")
+            attempted_entries["category"] = True
+            if not core.update.food_category(entity_id, food_data.get("category")):
+                attempted_entries["category"] = False
 
         if food_data.get("size"):
-            total_values += 1
-            if not core.updater.food_size(entity_id, food_data.get("size")):
-                success = False
-                failure.append("size")
+            attempted_entries["size"] = True
+            if not core.update.food_size(entity_id, food_data.get("size")):
+                attempted_entries["size"] = False
 
-        if not total_values:
-            return MissingEntryData
+        if not len(attempted_entries): 
+            # no useful data was provided by the user
+            raise ImproperEntryData
 
-        if len(failure) == total_values:
-            raise EntryNotFound
+        data = core.find.food(entity_id)
+        success = all(attempted_entries.values())
 
-        data = core.finder.food(entity_id)
+        if not data: 
+            # between updating the data and fetching it again, it vanished!
+            raise DataInconsistencyError
 
-        if success and data:
-            return {"success": True, "message": "", "code": 0, "data": data}
+        if success: 
+            return {
+                "success": True, 
+                "message": "", 
+                "code": 0, 
+                "data": data
+            }
 
-        raise DataInconsistencyError
+        return {
+            "success": False, 
+            "message": "Some items did not successfully update. ", 
+            "code": PARTIAL_SUCCESS, 
+            "data": data,
+            "results": attempted_entries
+        }, 207

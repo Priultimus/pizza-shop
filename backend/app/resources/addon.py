@@ -8,6 +8,8 @@ from ..errors import (
     EntryNotFound,
     DataInconsistencyError,
     MissingEntryData,
+    ImproperEntryData,
+    PARTIAL_SUCCESS
 )
 
 
@@ -44,7 +46,12 @@ class ManageAddon(Resource):
         addon = core.deletor.addon(addon_id)
         if not addon:
             raise EntryNotFound
-        return {"success": True, "message": "", "code": 0, "data": {}}
+        return {
+            "success": True, 
+            "message": "", 
+            "code": 0, 
+            "data": {}
+            }, 204
 
     def put(self, addon_id):
         data = request.get_json()
@@ -61,47 +68,55 @@ class ManageAddon(Resource):
         if not addon_data:
             raise MissingEntryData
 
-        failure = []
-        total_values = 0
-        success = True
+        attempted_entries = {}
 
         if addon_data.get("name"):
-            total_values += 1
+            attempted_entries["name"] = True
             result = core.updater.addon_name(addon_id, addon_data.get("name"))
             if not result:
-                success = False
-                failure.append("name")
+                attempted_entries["name"] = False
 
         if addon_data.get("type"):
-            total_values += 1
+            attempted_entries["type"] = True
             result = core.updater.addon_type(addon_id, addon_data.get("type"))
             if not result:
-                success = False
-                failure.append("type")
+                attempted_entries["type"] = False
 
         if addon_data.get("price"):
-            total_values += 1
+            attempted_entries["price"] = True
             result = core.updater.addon_price(addon_id, addon_data.get("price"))
             if not result:
-                success = False
-                failure.append("price")
+                attempted_entries["price"] = False
 
         if addon_data.get("size"):
-            total_values += 1
+            attempted_entries["size"] = True
             result = core.updater.addon_size(addon_id, addon_data.get("size"))
             if not result:
-                success = False
-                failure.append("size")
-
-        if not total_values:
-            raise MissingEntryData
-
-        if len(failure) == total_values:
-            raise EntryNotFound
+                attempted_entries["size"] = False
+        
+        if not len(attempted_entries): 
+            # no useful data was provided by the user
+            raise ImproperEntryData
 
         data = core.finder.addon(addon_id)
+        success = all(attempted_entries.values())
 
-        if success and data:
-            return {"success": True, "message": "", "code": 0, "data": data}
+        if not data: 
+            # between updating the data and fetching it again, it vanished!
+            raise DataInconsistencyError
 
-        raise DataInconsistencyError
+        if success: 
+            return {
+                "success": True, 
+                "message": "", 
+                "code": 0, 
+                "data": data
+            }
+
+        return {
+            "success": False, 
+            "message": "Some items did not successfully update. ", 
+            "code": PARTIAL_SUCCESS, 
+            "data": data,
+            "results": attempted_entries
+        }, 207

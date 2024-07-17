@@ -8,6 +8,8 @@ from ..errors import (
     EntryNotFound,
     DataInconsistencyError,
     MissingEntryData,
+    ImproperEntryData,
+    PARTIAL_SUCCESS
 )
 
 
@@ -47,7 +49,12 @@ class ManageCustomer(Resource):
         customer = core.delete.customer(customer_id)
         if not customer:
             raise EntryNotFound
-        return {"success": True, "message": "", "code": 0, "data": {}}
+        return {
+            "success": True,
+            "message": "",
+            "code": 0,
+            "data": {}
+            }, 204
 
     def put(self, customer_id: int):
         data = request.get_json()
@@ -59,39 +66,48 @@ class ManageCustomer(Resource):
         if not customer_entity:
             raise EntryNotFound
 
-        failure = []
-        total_values = 0
-        success = True
+        attempted_entries = {}
 
         if customer_data.get("name"):
-            total_values += 1
+            attempted_entries["name"] = True
             if not core.update.customer_name(customer_id, customer_data.get("name")):
-                failure.append("name")
-                success = False
+                attempted_entries["name"] = False
 
         if customer_data.get("phone"):
-            total_values += 1
+            attempted_entries["phone"] = True
             if not core.update.customer_phone(customer_id, customer_data.get("phone")):
-                failure.append("phone")
-                success = False
+                attempted_entries["phone"] = False
 
         if customer_data.get("address"):
-            total_values += 1
+            attempted_entries["address"] = True
             if not core.update.customer_address(
                 customer_id, customer_data.get("address")
             ):
-                failure.append("address")
-                success = False
+                attempted_entries["address"] = False
 
-        if not total_values:
-            raise MissingEntryData
-
-        if len(failure) == total_values:
-            raise EntryNotFound
+        if not len(attempted_entries): 
+            # no useful data was provided by the user
+            raise ImproperEntryData
 
         data = core.find.customer(customer_id)
+        success = all(attempted_entries.values())
 
-        if success and data:
-            return {"success": True, "message": "", "code": 0, "data": data}
+        if not data: 
+            # between updating the data and fetching it again, it vanished!
+            raise DataInconsistencyError
 
-        raise DataInconsistencyError
+        if success: 
+            return {
+                "success": True, 
+                "message": "", 
+                "code": 0, 
+                "data": data
+            }
+
+        return {
+            "success": False, 
+            "message": "Some items did not successfully update. ", 
+            "code": PARTIAL_SUCCESS, 
+            "data": data,
+            "results": attempted_entries
+        }, 207
