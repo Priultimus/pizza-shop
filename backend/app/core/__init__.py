@@ -1,11 +1,10 @@
-from .creator import Create
-from .deletor import Delete
 from .finder import Find
-from .updater import Update
-
-create = Create()
-delete = Delete()
 find = Find()
+from .creator import Create
+create = Create()
+from .deletor import Delete
+delete = Delete()
+from .updater import Update
 update = Update()
 
 __all__ = (
