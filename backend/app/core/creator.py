@@ -109,7 +109,7 @@ class Create:
             return False
         order_id = order.order_id
         self.manager.new_customer_order(customer_id, order_id)
-        orderitems: list[dict] = []
+        items: list[dict] = []
         order_price = 0
         for food_id in order_items:
             food = self.viewer.view_food(food_id)
@@ -124,13 +124,13 @@ class Create:
                 addons.append(addon.convert_to_dict())
                 order_price += addon.price
                 self.manager.new_item_mod(order_item_id, addon_id, 0, addon.price)
-            orderitem = order_item.convert_to_dict()
-            orderitem["addons"] = addons
-            orderitems.append(orderitem)
+            item = order_item.convert_to_dict()
+            item["addons"] = addons
+            items.append(item)
 
         order = order.convert_to_dict()
         order["order_price"] = order_price
         order["customer_id"] = customer_id
-        order["order_items"] = orderitems
+        order["order_items"] = items
 
         return order
