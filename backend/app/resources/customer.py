@@ -39,14 +39,14 @@ class ManageCustomer(Resource):
     def __init__(self):
         self.logger = logging.getLogger("ManageCustomer")
 
-    def get(self, customer_id: int):
-        customer = core.find.customer(customer_id)
+    def get(self, entity_id: int):
+        customer = core.find.customer(entity_id)
         if not customer:
             raise EntryNotFound
         return {"success": True, "message": "", "code": 0, "data": customer}
 
-    def delete(self, customer_id: int):
-        customer = core.delete.customer(customer_id)
+    def delete(self, entity_id: int):
+        customer = core.delete.customer(entity_id)
         if not customer:
             raise EntryNotFound
         return {
@@ -56,13 +56,13 @@ class ManageCustomer(Resource):
             "data": {}
             }, 204
 
-    def put(self, customer_id: int):
+    def put(self, entity_id: int):
         data = request.get_json()
         customer_data = data.get("customer")
         if not customer_data:
             raise MissingEntryData
 
-        customer_entity = core.find.customer(customer_id)
+        customer_entity = core.find.customer(entity_id)
         if not customer_entity:
             raise EntryNotFound
 
@@ -70,18 +70,18 @@ class ManageCustomer(Resource):
 
         if customer_data.get("name"):
             attempted_entries["name"] = True
-            if not core.update.customer_name(customer_id, customer_data.get("name")):
+            if not core.update.customer_name(entity_id, customer_data.get("name")):
                 attempted_entries["name"] = False
 
         if customer_data.get("phone"):
             attempted_entries["phone"] = True
-            if not core.update.customer_phone(customer_id, customer_data.get("phone")):
+            if not core.update.customer_phone(entity_id, customer_data.get("phone")):
                 attempted_entries["phone"] = False
 
         if customer_data.get("address"):
             attempted_entries["address"] = True
             if not core.update.customer_address(
-                customer_id, customer_data.get("address")
+                entity_id, customer_data.get("address")
             ):
                 attempted_entries["address"] = False
 
@@ -89,7 +89,7 @@ class ManageCustomer(Resource):
             # no useful data was provided by the user
             raise ImproperEntryData
 
-        data = core.find.customer(customer_id)
+        data = core.find.customer(entity_id)
         success = all(attempted_entries.values())
 
         if not data: 
