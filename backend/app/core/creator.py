@@ -114,16 +114,16 @@ class Create:
         for food_id in order_items:
             food = self.viewer.view_food(food_id)
             food_addons = order_items[food_id]
-            order_item = self.manager.new_order_item(order_id, food_id, food.price)
+            order_item = self.manager.new_order_item(order_id, food_id, food.food_price)
             order_item_id = order_item.order_item_id
 
-            order_price += food.price
+            order_price += food.food_price
             addons = []
             for addon_id in food_addons:
                 addon = self.viewer.view_addon(addon_id)
                 addons.append(addon.convert_to_dict())
-                order_price += addon.price
-                self.manager.new_item_mod(order_item_id, addon_id, 0, addon.price)
+                order_price += addon.addon_price
+                self.manager.new_item_mod(order_item_id, addon_id, 0, addon.addon_price)
             item = order_item.convert_to_dict()
             item["addons"] = addons
             items.append(item)
