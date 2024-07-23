@@ -2,7 +2,7 @@ PARTIAL_SUCCESS = 3000
 
 GENERIC_BAD_REQUEST = 4000
 MISSING_ENTRY_DATA = 4001
-MISSING_FOOD_SIZE = 4002
+# MISSING_FOOD_SIZE = 4002
 BAD_ENTRY_DATA = 4003
 ENTRY_NOT_FOUND = 4004
 
@@ -16,7 +16,7 @@ class GeneralException(Exception):
         # If the key `message` is provided,
         # provide the message string to Exception class
         # in order to display the message while raising the exception
-        self.http_status_code = kwargs.get("http_status_code", None)
+        self.http_status_code = kwargs.get("http_status_code", 500)
         default_message = kwargs.get("default_message")
         if len(args) > 0:
             kwargs["message"] = args[0]
@@ -78,21 +78,11 @@ class ImproperEntryData(GeneralException):
         )
 
 
-class MissingFoodSize(GeneralException):
-    def __init__(self, *args, **kwargs):
-        super().__init__(
-            default_message="Food size is required for this category",
-            data={} if not kwargs.get("data") else kwargs.get("data"),
-            http_status_code=400,
-            code=MISSING_FOOD_SIZE,
-            *args,
-            **kwargs,
-        )
-
-
 class CoreError(GeneralException):
     pass
 
+class MustDeleteOrders(CoreError):
+    pass
 
 class CustomerNotFoundError(CoreError):
     pass

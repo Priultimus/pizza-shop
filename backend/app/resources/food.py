@@ -7,7 +7,6 @@ from .. import core
 from ..errors import (
     EntryNotFound,
     ImproperEntryData,
-    MissingFoodSize,
     DataInconsistencyError,
     MissingEntryData,
     PARTIAL_SUCCESS
@@ -32,7 +31,7 @@ class CreateFood(Resource):
         if food:
             return {"success": True, "message": "", "code": 0, "data": food}
         else:
-            raise MissingFoodSize
+            raise ImproperEntryData("Food size is required for this category.")
 
 
 class ManageFood(Resource):
