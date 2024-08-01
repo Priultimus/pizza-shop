@@ -1,7 +1,10 @@
 import logging
+import json
 
 from flask_restful import Resource  # type: ignore
-from flask import request
+from flask import request, Response
+
+from .helper import clean_data
 
 from .. import core
 from ..errors import (
@@ -28,19 +31,20 @@ class CreateAddon(Resource):
             addon_data.get("price"),
             addon_size=addon_data.get("size"),
         )
-        return {"success": True, "message": "", "code": 0, "data": addon}
-
+        data = clean_data({"success": True, "message": "", "code": 0, "data": addon}, serialize=True)
+        headers = {"location": f"api/menu/addon/{addon['addon_id']}"}
+        return Response(data, status=201, mimetype="application/json", headers=headers)
 
 class ManageAddon(Resource):
     def __init__(self):
         self.logger = logging.getLogger("ManageAddon")
 
     def get(self, entity_id):
-        entity = core.find.addon(entity_id)
-        if entity:
-            return {"success": True, "message": "", "code": 0, "data": entity}
-        else:
+        addon = core.find.addon(entity_id)
+        if not addon:
             raise EntryNotFound
+        resp = clean_data({"success": True, "message": "", "code": 0, "data": addon}, serialize=True)
+        return Response(resp, status=200, mimetype="application/json")
 
     def delete(self, entity_id):
         addon = core.delete.addon(entity_id)
@@ -105,18 +109,16 @@ class ManageAddon(Resource):
             # between updating the data and fetching it again, it vanished!
             raise DataInconsistencyError
 
-        if success: 
-            return {
-                "success": True, 
-                "message": "", 
-                "code": 0, 
-                "data": data
-            }
+        if success:
+            resp = clean_data({"success": True, "message": "", "code": 0, "data": data}, serialize=True)
+            return Response(resp, status=200, mimetype="application/json")
 
-        return {
+        resp = clean_data({
             "success": False, 
             "message": "Some items did not successfully update. ", 
             "code": PARTIAL_SUCCESS, 
-            "data": data,
-            "results": attempted_entries
-        }, 207
+            "data": data, 
+            "results": attempted_entries}, serialize=True
+            )
+
+        return Response(resp, status=207, mimetype="application/json")

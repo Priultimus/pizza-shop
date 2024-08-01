@@ -1,7 +1,9 @@
 import logging
 
 from flask_restful import Resource  # type: ignore
-from flask import request
+from flask import request, Response
+
+from .helper import clean_data
 
 from .. import core
 from ..errors import (
@@ -28,22 +30,23 @@ class CreateFood(Resource):
             food_data.get("category"),
             food_size=food_data.get("size"),
         )
-        if food:
-            return {"success": True, "message": "", "code": 0, "data": food}
-        else:
+        if not food:
             raise ImproperEntryData("Food size is required for this category.")
 
+        resp = clean_data({"success": True, "message": "", "code": 0, "data": food}, serialize=True)
+        headers = {"location": f"api/menu/food/{food['food_id']}"}
+        return Response(resp, status=201, mimetype="application/json", headers=headers)
 
 class ManageFood(Resource):
     def __init__(self):
         self.logger = logging.getLogger("ManageFood")
 
     def get(self, entity_id):
-        entity = core.find.food(entity_id)
-        if entity:
-            return {"success": True, "message": "", "code": 0, "data": entity}
-        else:
+        food = core.find.food(entity_id)
+        if not food:
             raise EntryNotFound
+        resp = clean_data({"success": True, "message": "", "code": 0, "data": food}, serialize=True)
+        return Response(resp, status=200, mimetype="application/json")
 
     def delete(self, entity_id):
         food = core.delete.food(entity_id)
@@ -99,18 +102,16 @@ class ManageFood(Resource):
             # between updating the data and fetching it again, it vanished!
             raise DataInconsistencyError
 
-        if success: 
-            return {
-                "success": True, 
-                "message": "", 
-                "code": 0, 
-                "data": data
-            }
-
-        return {
+        if success:
+            resp = clean_data({"success": True, "message": "", "code": 0, "data": data}, serialize=True)
+            return Response(resp, status=200, mimetype="application/json")
+        
+        resp = clean_data({
             "success": False, 
             "message": "Some items did not successfully update. ", 
             "code": PARTIAL_SUCCESS, 
-            "data": data,
-            "results": attempted_entries
-        }, 207
+            "data": data, 
+            "results": attempted_entries}, serialize=True
+            )
+
+        return Response(resp, status=207, mimetype="application/json")

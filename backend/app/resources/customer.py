@@ -1,7 +1,9 @@
 import logging
 
 from flask_restful import Resource  # type: ignore
-from flask import request
+from flask import request, Response
+
+from .helper import clean_data
 
 from .. import core
 from ..errors import (
@@ -32,8 +34,9 @@ class CreateCustomer(Resource):
             customer_data.get("phone"),
             customer_data.get("address"),
         )
-        return {"success": True, "message": "", "code": 0, "data": customer}
-
+        resp = clean_data({"success": True, "message": "", "code": 0, "data": customer}, serialize=True)
+        headers = {"location": f"api/customer/{customer['customer_id']}"}
+        return Response(resp, status=201, mimetype="application/json", headers=headers)
 
 class ManageCustomer(Resource):
     def __init__(self):
@@ -43,7 +46,8 @@ class ManageCustomer(Resource):
         customer = core.find.customer(entity_id)
         if not customer:
             raise EntryNotFound
-        return {"success": True, "message": "", "code": 0, "data": customer}
+        resp = clean_data({"success": True, "message": "", "code": 0, "data": customer}, serialize=True)
+        return Response(resp, status=200, mimetype="application/json")
 
     def delete(self, entity_id: int):
         customer = core.delete.customer(entity_id)
@@ -96,18 +100,16 @@ class ManageCustomer(Resource):
             # between updating the data and fetching it again, it vanished!
             raise DataInconsistencyError
 
-        if success: 
-            return {
-                "success": True, 
-                "message": "", 
-                "code": 0, 
-                "data": data
-            }
+        if success:
+            resp = clean_data({"success": True, "message": "", "code": 0, "data": data}, serialize=True)
+            return Response(resp, status=200, mimetype="application/json")
 
-        return {
+        resp = clean_data({
             "success": False, 
             "message": "Some items did not successfully update. ", 
             "code": PARTIAL_SUCCESS, 
-            "data": data,
-            "results": attempted_entries
-        }, 207
+            "data": data, 
+            "results": attempted_entries}, serialize=True
+            )
+
+        return Response(resp, status=207, mimetype="application/json")
