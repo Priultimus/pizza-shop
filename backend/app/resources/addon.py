@@ -39,15 +39,15 @@ class ManageAddon(Resource):
     def __init__(self):
         self.logger = logging.getLogger("ManageAddon")
 
-    def get(self, entity_id):
-        addon = core.find.addon(entity_id)
+    def get(self, addon_id):
+        addon = core.find.addon(addon_id)
         if not addon:
             raise EntryNotFound
         resp = clean_data({"success": True, "message": "", "code": 0, "data": addon}, serialize=True)
         return Response(resp, status=200, mimetype="application/json")
 
-    def delete(self, entity_id):
-        addon = core.delete.addon(entity_id)
+    def delete(self, addon_id):
+        addon = core.delete.addon(addon_id)
         if not addon:
             raise EntryNotFound
         return {
@@ -57,13 +57,13 @@ class ManageAddon(Resource):
             "data": {}
             }, 204
 
-    def put(self, entity_id):
+    def put(self, addon_id):
         data = request.get_json()
         if not data.get("addon"):
             raise MissingEntryData
         addon_data = data.get("addon")
 
-        addon_entity = core.find.addon(entity_id)
+        addon_entity = core.find.addon(addon_id)
         if not addon_entity:
             raise EntryNotFound
 
@@ -76,25 +76,25 @@ class ManageAddon(Resource):
 
         if addon_data.get("name"):
             attempted_entries["name"] = True
-            result = core.update.addon_name(entity_id, addon_data.get("name"))
+            result = core.update.addon_name(addon_id, addon_data.get("name"))
             if not result:
                 attempted_entries["name"] = False
 
         if addon_data.get("type"):
             attempted_entries["type"] = True
-            result = core.update.addon_type(entity_id, addon_data.get("type"))
+            result = core.update.addon_type(addon_id, addon_data.get("type"))
             if not result:
                 attempted_entries["type"] = False
 
         if addon_data.get("price"):
             attempted_entries["price"] = True
-            result = core.update.addon_price(entity_id, addon_data.get("price"))
+            result = core.update.addon_price(addon_id, addon_data.get("price"))
             if not result:
                 attempted_entries["price"] = False
 
         if addon_data.get("size"):
             attempted_entries["size"] = True
-            result = core.update.addon_size(entity_id, addon_data.get("size"))
+            result = core.update.addon_size(addon_id, addon_data.get("size"))
             if not result:
                 attempted_entries["size"] = False
         
@@ -102,7 +102,7 @@ class ManageAddon(Resource):
             # no useful data was provided by the user
             raise ImproperEntryData
 
-        data = core.find.addon(entity_id)
+        data = core.find.addon(addon_id)
         success = all(attempted_entries.values())
 
         if not data: 

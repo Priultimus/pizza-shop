@@ -26,16 +26,18 @@ def init_app():
             ManageFood,
             ManageAddon,
             ManageCustomer,
+            ManageOrder,
         )
         from .api import ExtendedAPI
 
         db.create_all()
         api = ExtendedAPI(app, catch_all_404s=True)
         api.add_resource(CreateFood, "/api/menu/food")
-        api.add_resource(ManageFood, "/api/menu/food/<int:entity_id>")
+        api.add_resource(ManageFood, "/api/menu/food/<int:food_id>")
         api.add_resource(CreateAddon, "/api/menu/addon")
-        api.add_resource(ManageAddon, "/api/menu/addon/<int:entity_id>")
+        api.add_resource(ManageAddon, "/api/menu/addon/<int:addon_id>")
         api.add_resource(CreateCustomer, "/api/customer")
-        api.add_resource(ManageCustomer, "/api/customer/<int:entity_id>")
-        api.add_resource(CreateOrder, "/api/customer/<int:entity_id>/order")
+        api.add_resource(ManageCustomer, "/api/customer/<int:customer_id>")
+        api.add_resource(CreateOrder, "/api/customer/<int:customer_id>/order")
+        api.add_resource(ManageOrder, "/api/order/<int:order_id>")
         return app

@@ -41,15 +41,15 @@ class ManageFood(Resource):
     def __init__(self):
         self.logger = logging.getLogger("ManageFood")
 
-    def get(self, entity_id):
-        food = core.find.food(entity_id)
+    def get(self, food_id):
+        food = core.find.food(food_id)
         if not food:
             raise EntryNotFound
         resp = clean_data({"success": True, "message": "", "code": 0, "data": food}, serialize=True)
         return Response(resp, status=200, mimetype="application/json")
 
-    def delete(self, entity_id):
-        food = core.delete.food(entity_id)
+    def delete(self, food_id):
+        food = core.delete.food(food_id)
         if not food:
             raise EntryNotFound
         return {
@@ -59,13 +59,13 @@ class ManageFood(Resource):
             "data": {}
             }, 204
 
-    def put(self, entity_id):
+    def put(self, food_id):
         data = request.get_json()
         food_data = data.get("food")
         if not food_data:
             raise MissingEntryData
 
-        food_entity = core.find.food(entity_id)
+        food_entity = core.find.food(food_id)
         if not food_entity:
             raise EntryNotFound
 
@@ -73,29 +73,29 @@ class ManageFood(Resource):
 
         if food_data.get("name"):
             attempted_entries["name"] = True
-            if not core.update.food_name(entity_id, food_data.get("name")):
+            if not core.update.food_name(food_id, food_data.get("name")):
                 attempted_entries["name"] = False
 
         if food_data.get("price"):
             attempted_entries["price"] = True
-            if not core.update.food_price(entity_id, food_data.get("price")):
+            if not core.update.food_price(food_id, food_data.get("price")):
                 attempted_entries["price"] = False
 
         if food_data.get("category"):
             attempted_entries["category"] = True
-            if not core.update.food_category(entity_id, food_data.get("category")):
+            if not core.update.food_category(food_id, food_data.get("category")):
                 attempted_entries["category"] = False
 
         if food_data.get("size"):
             attempted_entries["size"] = True
-            if not core.update.food_size(entity_id, food_data.get("size")):
+            if not core.update.food_size(food_id, food_data.get("size")):
                 attempted_entries["size"] = False
 
         if not len(attempted_entries): 
             # no useful data was provided by the user
             raise ImproperEntryData
 
-        data = core.find.food(entity_id)
+        data = core.find.food(food_id)
         success = all(attempted_entries.values())
 
         if not data: 
