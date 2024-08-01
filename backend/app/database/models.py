@@ -52,8 +52,8 @@ class Order(Base):
     def convert_to_dict(self) -> dict:
         obj_dict = {
             "order_id": self.order_id,
-            "date": self.date,
-            "payment_method": self.payment_method,
+            "date": self.order_date,
+            "payment_method": self.order_payment_method,
             "order_type": self.order_type,
         }
         return obj_dict
@@ -126,7 +126,7 @@ class OrderItem(Base):
     food_id = Column(Integer(), ForeignKey("food.food_id"), nullable=False)
     order_item_price = Column(Integer(), nullable=False)
 
-    def convert_to_dictionary(self) -> dict:
+    def convert_to_dict(self) -> dict:
         obj_dict = {
             "order_item_id": self.order_item_id,
             "order_id": self.order_id,
