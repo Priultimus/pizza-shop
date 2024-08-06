@@ -4,12 +4,12 @@ from .customer import CreateCustomer, ManageCustomer
 from .order import CreateOrder, ManageOrder
 
 __all__ = (
-    "CreateAddon", 
+    "CreateAddon",
     "ManageAddon",
-    "CreateFood", 
+    "CreateFood",
     "ManageFood",
-    "CreateCustomer", 
+    "CreateCustomer",
     "ManageCustomer",
-    "CreateOrder", 
-    "ManageOrder"
+    "CreateOrder",
+    "ManageOrder",
 )

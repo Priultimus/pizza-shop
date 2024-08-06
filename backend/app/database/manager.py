@@ -276,7 +276,9 @@ class ManageResturantData:
 
     def remove_customer_orders(self, customer_id: int) -> None:
         """Removes all customer orders for a given customer."""
-        entities = CustomerOrder.query.filter(CustomerOrder.customer_id == customer_id).all()
+        entities = CustomerOrder.query.filter(
+            CustomerOrder.customer_id == customer_id
+        ).all()
         if not entities:
             raise EntityNotFound("The customer does not have any orders.")
         for entity in entities:
@@ -335,7 +337,7 @@ class ManageResturantData:
         db.session.delete(entity)
         db.session.commit()
         return
-    
+
     def remove_order_items(self, order_id: int) -> None:
         """Removes all order items for a given order."""
         entities = OrderItem.query.filter(OrderItem.order_id == order_id).all()
@@ -402,14 +404,12 @@ class ManageResturantData:
         db.session.delete(entity)
         db.session.commit()
         return
-    
+
     def remove_item_mods(self, order_item_id: int) -> None:
         """Removes all item modifications for a given order item."""
         entities = ItemMod.query.filter(ItemMod.order_item_id == order_item_id).all()
         if not entities:
-            raise EntityNotFound(
-                "The order item does not have any modifications."
-            )
+            raise EntityNotFound("The order item does not have any modifications.")
         for entity in entities:
             db.session.delete(entity)
         db.session.commit()

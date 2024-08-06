@@ -11,7 +11,7 @@ from ..errors import (
     DataInconsistencyError,
     MissingEntryData,
     ImproperEntryData,
-    PARTIAL_SUCCESS
+    PARTIAL_SUCCESS,
 )
 
 
@@ -34,9 +34,13 @@ class CreateCustomer(Resource):
             customer_data.get("phone"),
             customer_data.get("address"),
         )
-        resp = clean_data({"success": True, "message": "", "code": 0, "data": customer}, serialize=True)
+        resp = clean_data(
+            {"success": True, "message": "", "code": 0, "data": customer},
+            serialize=True,
+        )
         headers = {"location": f"api/customer/{customer['customer_id']}"}
         return Response(resp, status=201, mimetype="application/json", headers=headers)
+
 
 class ManageCustomer(Resource):
     def __init__(self):
@@ -46,19 +50,17 @@ class ManageCustomer(Resource):
         customer = core.find.customer(customer_id)
         if not customer:
             raise EntryNotFound
-        resp = clean_data({"success": True, "message": "", "code": 0, "data": customer}, serialize=True)
+        resp = clean_data(
+            {"success": True, "message": "", "code": 0, "data": customer},
+            serialize=True,
+        )
         return Response(resp, status=200, mimetype="application/json")
 
     def delete(self, customer_id: int):
         customer = core.delete.customer(customer_id)
         if not customer:
             raise EntryNotFound
-        return {
-            "success": True,
-            "message": "",
-            "code": 0,
-            "data": {}
-            }, 204
+        return {"success": True, "message": "", "code": 0, "data": {}}, 204
 
     def put(self, customer_id: int):
         data = request.get_json()
@@ -89,27 +91,33 @@ class ManageCustomer(Resource):
             ):
                 attempted_entries["address"] = False
 
-        if not len(attempted_entries): 
+        if not len(attempted_entries):
             # no useful data was provided by the user
             raise ImproperEntryData
 
         data = core.find.customer(customer_id)
         success = all(attempted_entries.values())
 
-        if not data: 
+        if not data:
             # between updating the data and fetching it again, it vanished!
             raise DataInconsistencyError
 
         if success:
-            resp = clean_data({"success": True, "message": "", "code": 0, "data": data}, serialize=True)
+            resp = clean_data(
+                {"success": True, "message": "", "code": 0, "data": data},
+                serialize=True,
+            )
             return Response(resp, status=200, mimetype="application/json")
 
-        resp = clean_data({
-            "success": False, 
-            "message": "Some items did not successfully update. ", 
-            "code": PARTIAL_SUCCESS, 
-            "data": data, 
-            "results": attempted_entries}, serialize=True
-            )
+        resp = clean_data(
+            {
+                "success": False,
+                "message": "Some items did not successfully update. ",
+                "code": PARTIAL_SUCCESS,
+                "data": data,
+                "results": attempted_entries,
+            },
+            serialize=True,
+        )
 
         return Response(resp, status=207, mimetype="application/json")

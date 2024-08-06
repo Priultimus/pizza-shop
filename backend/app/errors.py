@@ -81,8 +81,10 @@ class ImproperEntryData(GeneralException):
 class CoreError(GeneralException):
     pass
 
+
 class MustDeleteOrders(CoreError):
     pass
+
 
 class CustomerNotFoundError(CoreError):
     pass

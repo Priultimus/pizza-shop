@@ -32,13 +32,15 @@ class ExtendedAPI(Api):
 
         # If message & code attributes are not set, consider it as Python core exception and hide sensitive error info from end user
         # Otherwise, handle application specific custom exceptions
-        
+
         # Don't pass SQLALCHEMY error codes to the client
         code = getattr(err, "code", GENERIC_SERVER_ERROR)
         try:
             code = int(code)
         except ValueError:
-            logger.warning(f"Exception thrown had code {code} - replacing with GENERIC_SERVER_ERROR")
+            logger.warning(
+                f"Exception thrown had code {code} - replacing with GENERIC_SERVER_ERROR"
+            )
             code = GENERIC_SERVER_ERROR
 
         response = {

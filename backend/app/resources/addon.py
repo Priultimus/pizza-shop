@@ -12,7 +12,7 @@ from ..errors import (
     DataInconsistencyError,
     MissingEntryData,
     ImproperEntryData,
-    PARTIAL_SUCCESS
+    PARTIAL_SUCCESS,
 )
 
 
@@ -31,9 +31,12 @@ class CreateAddon(Resource):
             addon_data.get("price"),
             addon_size=addon_data.get("size"),
         )
-        data = clean_data({"success": True, "message": "", "code": 0, "data": addon}, serialize=True)
+        data = clean_data(
+            {"success": True, "message": "", "code": 0, "data": addon}, serialize=True
+        )
         headers = {"location": f"api/menu/addon/{addon['addon_id']}"}
         return Response(data, status=201, mimetype="application/json", headers=headers)
+
 
 class ManageAddon(Resource):
     def __init__(self):
@@ -43,19 +46,16 @@ class ManageAddon(Resource):
         addon = core.find.addon(addon_id)
         if not addon:
             raise EntryNotFound
-        resp = clean_data({"success": True, "message": "", "code": 0, "data": addon}, serialize=True)
+        resp = clean_data(
+            {"success": True, "message": "", "code": 0, "data": addon}, serialize=True
+        )
         return Response(resp, status=200, mimetype="application/json")
 
     def delete(self, addon_id):
         addon = core.delete.addon(addon_id)
         if not addon:
             raise EntryNotFound
-        return {
-            "success": True, 
-            "message": "", 
-            "code": 0, 
-            "data": {}
-            }, 204
+        return {"success": True, "message": "", "code": 0, "data": {}}, 204
 
     def put(self, addon_id):
         data = request.get_json()
@@ -97,28 +97,34 @@ class ManageAddon(Resource):
             result = core.update.addon_size(addon_id, addon_data.get("size"))
             if not result:
                 attempted_entries["size"] = False
-        
-        if not len(attempted_entries): 
+
+        if not len(attempted_entries):
             # no useful data was provided by the user
             raise ImproperEntryData
 
         data = core.find.addon(addon_id)
         success = all(attempted_entries.values())
 
-        if not data: 
+        if not data:
             # between updating the data and fetching it again, it vanished!
             raise DataInconsistencyError
 
         if success:
-            resp = clean_data({"success": True, "message": "", "code": 0, "data": data}, serialize=True)
+            resp = clean_data(
+                {"success": True, "message": "", "code": 0, "data": data},
+                serialize=True,
+            )
             return Response(resp, status=200, mimetype="application/json")
 
-        resp = clean_data({
-            "success": False, 
-            "message": "Some items did not successfully update. ", 
-            "code": PARTIAL_SUCCESS, 
-            "data": data, 
-            "results": attempted_entries}, serialize=True
-            )
+        resp = clean_data(
+            {
+                "success": False,
+                "message": "Some items did not successfully update. ",
+                "code": PARTIAL_SUCCESS,
+                "data": data,
+                "results": attempted_entries,
+            },
+            serialize=True,
+        )
 
         return Response(resp, status=207, mimetype="application/json")

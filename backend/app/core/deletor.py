@@ -50,7 +50,9 @@ class Delete:
             return False
         except IntegrityError:
             if not delete_orders:
-                raise MustDeleteOrders("This customer has orders that must be deleted first.")
+                raise MustDeleteOrders(
+                    "This customer has orders that must be deleted first."
+                )
             raise
         except Exception as e:
             self.logger.warning("An unhandled error occurred deleting the customer.")
@@ -68,7 +70,9 @@ class Delete:
             pass
 
         try:
-            order_items = [x.order_item_id for x in self.viewer.view_order_items(order_id)]
+            order_items = [
+                x.order_item_id for x in self.viewer.view_order_items(order_id)
+            ]
             for order_item_id in order_items:
                 try:
                     self.manager.remove_item_mods(order_item_id)
