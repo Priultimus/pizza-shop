@@ -18,10 +18,14 @@ class GeneralException(Exception):
         # in order to display the message while raising the exception
         self.http_status_code = kwargs.get("http_status_code", 500)
         default_message = kwargs.get("default_message")
-        if len(args) > 0:
+        if (
+            len(args) > 0
+        ):  # If there are any arguments, the first one is the message string
             kwargs["message"] = args[0]
             super().__init__(args[0])
-        elif default_message:
+        elif (
+            default_message
+        ):  # Otherwise, if the keyword argument default_message exists, its the exception string
             kwargs["message"] = default_message
             super().__init__(default_message)
         self.kwargs = kwargs
@@ -94,15 +98,16 @@ class DatabaseException(GeneralException):
     pass
 
 
-class ResturantException(DatabaseException):
-    pass
+class ResturantException(MissingEntryData, DatabaseException):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class CustomerException(DatabaseException):
     pass
 
 
-class EntityNotFound(DatabaseException):
+class EntityNotFound(EntryNotFound, DatabaseException):
     pass
 
 

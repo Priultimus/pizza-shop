@@ -21,20 +21,20 @@ class CreateAddon(Resource):
         self.logger = logging.getLogger("CreateAddon")
 
     def post(self):
-        data = request.get_json()
-        addon_data = data.get("addon")
+        addon_data = request.get_json()
         if not addon_data or not {"name", "type", "price"} <= set(addon_data):
             raise MissingEntryData
         addon = core.create.addon(
             addon_data.get("name"),
             addon_data.get("type"),
-            addon_data.get("price"),
+            float(addon_data.get("price")),
             addon_size=addon_data.get("size"),
         )
+
         data = clean_data(
             {"success": True, "message": "", "code": 0, "data": addon}, serialize=True
         )
-        headers = {"location": f"api/menu/addon/{addon['addon_id']}"}
+        headers = {"location": f"api/menu/addon/{addon['id']}"}
         return Response(data, status=201, mimetype="application/json", headers=headers)
 
 
@@ -58,19 +58,13 @@ class ManageAddon(Resource):
         return {"success": True, "message": "", "code": 0, "data": {}}, 204
 
     def put(self, addon_id):
-        data = request.get_json()
-        if not data.get("addon"):
+        addon_data = request.get_json()
+        if not addon_data:
             raise MissingEntryData
-        addon_data = data.get("addon")
 
         addon_entity = core.find.addon(addon_id)
         if not addon_entity:
             raise EntryNotFound
-
-        addon_data = data.get("addon")
-
-        if not addon_data:
-            raise MissingEntryData
 
         attempted_entries = {}
 
@@ -88,7 +82,7 @@ class ManageAddon(Resource):
 
         if addon_data.get("price"):
             attempted_entries["price"] = True
-            result = core.update.addon_price(addon_id, addon_data.get("price"))
+            result = core.update.addon_price(addon_id, float(addon_data.get("price")))
             if not result:
                 attempted_entries["price"] = False
 

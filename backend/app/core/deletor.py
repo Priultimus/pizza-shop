@@ -101,7 +101,7 @@ class Delete:
         except EntityNotFound:
             return False
 
-        price = order.convert_to_dict().get("order_price")
+        price = order.convert_to_dict().get("price")
         try:
             order_item_price = (
                 self.viewer.view_order_item(order_item_id)

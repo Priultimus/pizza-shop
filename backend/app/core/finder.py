@@ -80,8 +80,8 @@ class Find:
             orderitems.append(orderitem)
 
         order = order.convert_to_dict()
-        order["order_items"] = orderitems
-        order["order_price"] = order_price
+        order["items"] = orderitems
+        order["price"] = order_price
         order["customer_id"] = self.viewer.view_order_customer(order_id).customer_id
 
         return order

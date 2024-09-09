@@ -43,8 +43,9 @@ class Create:
         return food.convert_to_dict()
 
     def addon(
-        self, addon_name: str, addon_type: str, addon_price, addon_size=None
+        self, addon_name: str, addon_type: str, addon_price: float, addon_size=None
     ) -> dict:
+        print(f"creator says {addon_price}")
         try:
             addon = self.manager.new_addon_item(
                 addon_name, addon_type, addon_price, addon_size=addon_size
@@ -129,8 +130,8 @@ class Create:
             items.append(item)
 
         order = order.convert_to_dict()
-        order["order_price"] = order_price
+        order["price"] = order_price
         order["customer_id"] = customer_id
-        order["order_items"] = items
+        order["items"] = items
 
         return order

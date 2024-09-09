@@ -17,7 +17,7 @@ class ManageResturantData:
     def new_food_item(
         self,
         food_name: str,
-        food_price: int,
+        food_price: float,
         food_category: str,
         food_size: optional[str] = None,
     ) -> Food:
@@ -81,9 +81,10 @@ class ManageResturantData:
         self,
         addon_name: str,
         addon_type: str,
-        addon_price: int,
+        addon_price: float,
         addon_size: optional[str] = None,
     ) -> Addon:
+        print(f"manager says {addon_price}")
         """Adds addon items to the menu."""
 
         if addon_type in self.food_size_required and not addon_size:
@@ -287,7 +288,7 @@ class ManageResturantData:
         return
 
     def new_order_item(
-        self, order_id: int, food_id: int, order_item_price: int
+        self, order_id: int, food_id: int, order_item_price: float
     ) -> OrderItem:
         """Adds order item details to the database."""
         order_item_details = OrderItem(
@@ -352,7 +353,7 @@ class ManageResturantData:
         order_item_id: int,
         addon_id: int,
         item_mod_qty: int,
-        item_mod_price: int,
+        item_mod_price: float,
     ) -> ItemMod:
         """Adds item modification details to the database."""
         item_mod_details = ItemMod(

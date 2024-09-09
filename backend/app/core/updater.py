@@ -349,7 +349,7 @@ class Update:
             food = self.viewer.view_food(food_id).convert_to_dict()
             food_addons = order_items[food_id]
             order_item = self.manager.new_order_item(
-                order.get("order_id"), food_id, food.get("price")
+                order.get("id"), food_id, food.get("price")
             )
             orderitems.append(order_item.convert_to_dict())
             for addon_id in food_addons:
@@ -357,7 +357,7 @@ class Update:
                 addon_price = addon["price"]
                 addons.append(addon.convert_to_dict())
                 self.manager.new_item_mod(
-                    order_item.get("order_item_id"), addon_id, 1, addon_price
+                    order_item.get("id"), addon_id, 1, addon_price
                 )
 
         if query_order:

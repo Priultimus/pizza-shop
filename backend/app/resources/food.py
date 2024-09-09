@@ -26,7 +26,7 @@ class CreateFood(Resource):
             raise MissingEntryData
         food = core.create.food(
             food_data.get("name"),
-            food_data.get("price"),
+            float(food_data.get("price")),
             food_data.get("category"),
             food_size=food_data.get("size"),
         )
@@ -36,7 +36,7 @@ class CreateFood(Resource):
         resp = clean_data(
             {"success": True, "message": "", "code": 0, "data": food}, serialize=True
         )
-        headers = {"location": f"api/menu/food/{food['food_id']}"}
+        headers = {"location": f"api/menu/food/{food['id']}"}
         return Response(resp, status=201, mimetype="application/json", headers=headers)
 
 
@@ -78,7 +78,7 @@ class ManageFood(Resource):
 
         if food_data.get("price"):
             attempted_entries["price"] = True
-            if not core.update.food_price(food_id, food_data.get("price")):
+            if not core.update.food_price(food_id, float(food_data.get("price"))):
                 attempted_entries["price"] = False
 
         if food_data.get("category"):

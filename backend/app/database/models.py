@@ -6,6 +6,7 @@ from .. import db
 Column = db.Column
 String = db.String
 Integer = db.Integer
+Numeric = db.Numeric
 DateTime = db.DateTime
 ForeignKey = db.ForeignKey
 
@@ -27,13 +28,13 @@ class Customer(Base):
 
     def convert_to_dict(self) -> dict:
         obj_dict = {
-            "customer_id": self.customer_id,
-            "customer_name": self.customer_name,
-            "customer_phone_number": self.customer_phone_number,
-            "customer_street": self.customer_street,
-            "customer_city": self.customer_city,
-            "customer_province": self.customer_province,
-            "customer_postal_code": self.customer_postal_code,
+            "id": self.customer_id,
+            "name": self.customer_name,
+            "phone_number": self.customer_phone_number,
+            "street": self.customer_street,
+            "city": self.customer_city,
+            "province": self.customer_province,
+            "postal_code": self.customer_postal_code,
         }
         return obj_dict
 
@@ -51,10 +52,10 @@ class Order(Base):
 
     def convert_to_dict(self) -> dict:
         obj_dict = {
-            "order_id": self.order_id,
+            "id": self.order_id,
             "date": self.order_date,
             "payment_method": self.order_payment_method,
-            "order_type": self.order_type,
+            "type": self.order_type,
         }
         return obj_dict
 
@@ -66,17 +67,17 @@ class Food(Base):
     )
     food_name = Column(String(45), nullable=False)
     food_category = Column(String(45), nullable=False)
-    food_price = Column(Integer(), nullable=False)
+    food_price = Column(Numeric(5, 2), nullable=False)
 
     food_size = Column(String(45), nullable=True)
 
     def convert_to_dict(self) -> dict:
         obj_dict = {
-            "food_id": self.food_id,
-            "food_name": self.food_name,
-            "food_category": self.food_category,
-            "food_price": self.food_price,
-            "food_size": self.food_size,
+            "id": self.food_id,
+            "name": self.food_name,
+            "category": self.food_category,
+            "price": self.food_price,
+            "size": self.food_size,
         }
         return obj_dict
 
@@ -88,17 +89,17 @@ class Addon(Base):
     )
     addon_name = Column(String(45), nullable=False)
     addon_type = Column(String(45), nullable=False)
-    addon_price = Column(Integer(), nullable=False)
+    addon_price = Column(Numeric(5, 2), nullable=False)
 
     addon_size = Column(String(45), nullable=True)
 
     def convert_to_dict(self) -> dict:
         obj_dict = {
-            "addon_id": self.addon_id,
-            "addon_name": self.addon_name,
-            "addon_type": self.addon_type,
-            "addon_price": self.addon_price,
-            "addon_size": self.addon_size,
+            "id": self.addon_id,
+            "name": self.addon_name,
+            "type": self.addon_type,
+            "price": self.addon_price,
+            "size": self.addon_size,
         }
         return obj_dict
 
@@ -124,14 +125,14 @@ class OrderItem(Base):
     )
     order_id = Column(Integer(), ForeignKey("order.order_id"), nullable=False)
     food_id = Column(Integer(), ForeignKey("food.food_id"), nullable=False)
-    order_item_price = Column(Integer(), nullable=False)
+    order_item_price = Column(Numeric(5, 2), nullable=False)
 
     def convert_to_dict(self) -> dict:
         obj_dict = {
-            "order_item_id": self.order_item_id,
+            "id": self.order_item_id,
             "order_id": self.order_id,
             "food_id": self.food_id,
-            "order_item_price": self.order_item_price,
+            "price": self.order_item_price,
         }
         return obj_dict
 
@@ -148,13 +149,13 @@ class ItemMod(Base):
         Integer(), ForeignKey("addon.addon_id"), primary_key=True, nullable=False
     )
     item_mod_qty = Column(Integer(), nullable=False)
-    item_mod_price = Column(Integer(), nullable=False)
+    item_mod_price = Column(Numeric(5, 2), nullable=False)
 
     def convert_to_dict(self) -> dict:
         obj_dict = {
             "order_item_id": self.order_item_id,
             "addon_id": self.addon_id,
-            "item_mod_qty": self.item_mod_qty,
-            "item_mod_price": self.item_mod_price,
+            "qty": self.item_mod_qty,
+            "price": self.item_mod_price,
         }
         return obj_dict

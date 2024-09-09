@@ -1,5 +1,7 @@
 import logging
 
+from copy import deepcopy
+
 from flask_restful import Resource  # type: ignore
 from flask import request, Response
 
@@ -38,7 +40,7 @@ class CreateCustomer(Resource):
             {"success": True, "message": "", "code": 0, "data": customer},
             serialize=True,
         )
-        headers = {"location": f"api/customer/{customer['customer_id']}"}
+        headers = {"location": f"api/customer/{customer['id']}"}
         return Response(resp, status=201, mimetype="application/json", headers=headers)
 
 

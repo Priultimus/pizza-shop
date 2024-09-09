@@ -47,7 +47,7 @@ class CreateOrder(Resource):
         data = clean_data(
             {"success": True, "message": "", "code": 0, "data": order}, serialize=True
         )
-        headers = {"location": f"api/customer/{customer_id}/order/{order['order_id']}"}
+        headers = {"location": f"api/customer/{customer_id}/order/{order['id']}"}
         return Response(data, status=201, mimetype="application/json", headers=headers)
 
 
